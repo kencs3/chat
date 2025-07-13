@@ -1,0 +1,8 @@
+{
+    "name": "73's phone",
+    "short_name": "73's phone",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#e0c9f5",
+    "theme_color": "#e0c9f5"
+}

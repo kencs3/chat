@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迷你手機</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- PWA for iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="73's phone" />
+    <link rel="apple-touch-icon" href="" />
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+</head>
+
+<body>
+    <div class="mobile-ui">
+        <!-- 主畫面 -->
+        <div id="page-home" class="page" style="display:block;">
+            <div class="page-header">73's</div>
+            <div class="page-content">
+                <p>這裡以後可以放紀念日倒數、天氣等等</p>
+            </div>
+        </div>
+
+        <!-- 聊天列表 -->
+        <div id="page-chat" class="page" style="display: none;">
+            <div class="page-header">
+                <span>Chat</span>
+                <button id="addChatBtn" class="addChatBtn ">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#FFFFFF">
+                        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="page-content" id="chatList">
+                <!-- 這裡以後會放聊天室 -->
+            </div>
+        </div>
+
+        <!-- 單一聊天畫面 -->
+        <div id="page-chatroom" class="page" style="display: none;">
+            <div class="chat-header">
+                <button class="back-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
+                        fill="#FFFFFF">
+                        <path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z" />
+                    </svg>
+                </button>
+                <span class="chat-title">Chat</span>
+                <div class="chat-buttons">
+                    <button id="cancelEditBtn" class="cancel-btn" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="27px" viewBox="0 -960 960 960" width="27px"
+                            fill="#FFFFFF">
+                            <path
+                                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                        </svg>
+                    </button>
+                    <button id="cancelDeleteBtn" class="cancel-btn" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="27px" viewBox="0 -960 960 960" width="27px"
+                            fill="#FFFFFF">
+                            <path
+                                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                        </svg>
+                    </button>
+                    <button id="deleteModeBtn" class="delete-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="27px" viewBox="0 -960 960 960" width="27px"
+                            fill="#FFFFFF">
+                            <path
+                                d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        </svg>
+                    </button>
+                    <button id="editModeBtn" class="edit-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="27px" viewBox="0 -960 960 960" width="27px"
+                            fill="#FFFFFF">
+                            <path
+                                d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+                        </svg>
+                    </button>
+                    <button id="chatSettingsBtn" class="chat-settings-btn"><svg xmlns="http://www.w3.org/2000/svg"
+                            height="27px" viewBox="0 -960 960 960" width="27px" fill="#FFFFFF">
+                            <path
+                                d="M686-132 444-376q-20 8-40.5 12t-43.5 4q-100 0-170-70t-70-170q0-36 10-68.5t28-61.5l146 146 72-72-146-146q29-18 61.5-28t68.5-10q100 0 170 70t70 170q0 23-4 43.5T584-516l244 242q12 12 12 29t-12 29l-84 84q-12 12-29 12t-29-12Zm29-85 27-27-256-256q18-20 26-46.5t8-53.5q0-60-38.5-104.5T386-758l74 74q12 12 12 28t-12 28L332-500q-12 12-28 12t-28-12l-74-74q9 57 53.5 95.5T360-440q26 0 52-8t47-25l256 256ZM472-488Z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="chat-messages" id="messages">
+            </div>
+            <div class="chat-input">
+                <button id="moreBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                        fill="#FFFFFF">
+                        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+                    </svg>
+                </button>
+                <textarea id="messageInput" rows="2" placeholder="輸入訊息..." style="resize: none;"></textarea>
+                <button id="sendBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+                    </svg>
+                </button>
+            </div>
+            <!-- 這個是隱藏的選單，點 + 才會彈出 -->
+            <div id="moreMenu" class="moreMenu" style="display: none;">
+                <button id="sendImageBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M480-480ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h320v80H200v560h560v-320h80v320q0 33-23.5 56.5T760-120H200Zm40-160h480L570-480 450-320l-90-120-120 160Zm440-320v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
+                    </svg>
+                </button>
+                <button id="voiceBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm0-240Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z" />
+                    </svg>
+                </button>
+                <button id="moneyBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                    </svg>
+                </button>
+                <!-- 你可以再加更多 -->
+            </div>
+        </div>
+
+
+
+        <!-- 這是聊天室設定 -->
+        <div id="chatSettingsPanel" class="chat-settings-panel" style="display:none;">
+            <h3>聊天室設定</h3>
+            <label>更改角色名稱</label>
+            <input type="text" id="chatNameInput">
+            <h4>他的人設</h4>
+            <textarea id="aiPersonaInput" placeholder="輸入他的人設"></textarea>
+            <label>頭貼</label>
+            <input type="text" id="aiAvatarUrlInput" placeholder="https://..." />
+            <div class="ai-avatar-preview"></div>
+            <label>上下文記憶條數</label>
+            <input type="number" id="contextLengthInput" placeholder="預設是 3 條" min="0" />
+            <small style="font-size: 12px; color: #888;">AI 每次回覆會讀取幾則你們之前的對話。</small>
+
+            <h3>我的設定</h4>
+                <label>我的名稱</label>
+                <input type="text" id="myNameInput" placeholder="我的名字" />
+                <h4>我的人設</h4>
+                <textarea id="myPersonaInput" placeholder="輸入我的人設"></textarea>
+                <label>頭貼</label>
+                <input type="text" id="myAvatarUrlInput" placeholder="https://...">
+                <div class="my-avatar-preview"></div>
+
+                <button id="saveSettingsBtn2">儲存設定</button>
+                <button id="cancelSettingsBtn">取消</button>
+        </div>
+
+        <!-- 新增聊天室 Modal -->
+        <div id="addChatModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h3>新增聊天室</h3>
+
+                <label>角色名稱</label><br>
+                <input type="text" id="newChatName" placeholder="請輸入角色名稱" /><br>
+
+                <label>角色人設</label><br>
+                <textarea id="newAiPersona" placeholder="請輸入角色人設"></textarea><br>
+
+                <label>角色頭像</label><br>
+                <input type="text" id="newAiAvatar" placeholder="https://..." /><br>
+                <br>
+                <label>我的名稱</label><br>
+                <input type="text" id="newMyName" placeholder="請輸入我的名稱" /><br>
+                <label>我的人設</label><br>
+                <textarea id="newMyPersona" placeholder="請輸入我的人設"></textarea><br>
+
+                <label>我的頭像</label><br>
+                <input type="text" id="newMyAvatar" placeholder="https://..." /><br>
+
+                <div class="modal-actions" style="margin-top: 10px;">
+                    <button id="cancelAddChat">取消</button>
+                    <button id="confirmAddChat">確定</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- post -->
+        <div id="page-posts" class="page" style="display:none;">
+            <div class="page-header">Post</div>
+            <div class="page-fre">
+                <div class="photo-header">
+                    <img id="post-bg" src="https://i.meee.com.tw/7RTGyUf.jpg" alt="背景" class="post-bg" />
+                    <img id="post-avatar" src="https://i.meee.com.tw/mYv66sr.png" alt="頭貼" class="post-avatar" />
+                    <span id="nickname" class="nickname">user</span>
+                </div>
+
+                <div class="post-create">
+                    <button id="cancelEditPost" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                        </svg>
+                    </button>
+                    <button id="editPostBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
+                        </svg>
+                    </button>
+                    <button id="characterPostBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
+                        </svg>
+                    </button>
+                    <button id="createPostBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="m499-287 335-335-52-52-335 335 52 52Zm-261 87q-100-5-149-42T40-349q0-65 53.5-105.5T242-503q39-3 58.5-12.5T320-542q0-26-29.5-39T193-600l7-80q103 8 151.5 41.5T400-542q0 53-38.5 83T248-423q-64 5-96 23.5T120-349q0 35 28 50.5t94 18.5l-4 80Zm280 7L353-358l382-382q20-20 47.5-20t47.5 20l70 70q20 20 20 47.5T900-575L518-193Zm-159 33q-17 4-30-9t-9-30l33-159 165 165-159 33Z" />
+                        </svg>
+                    </button>
+                    <button id="daily">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm457-560 21-89-71-59 94-8 36-84 36 84 94 8-71 59 21 89-80-47-80 47ZM480-481Z" />
+                        </svg>
+                    </button>
+                    <button id="deltetPostBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        </svg>
+                    </button>
+                    <button id="cancelPostBtn" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                        </svg>
+                    </button>
+                </div>
+                <!-- 角色日常選單 -->
+                <div id="dailyModal" style="
+                    display:none;
+                    position:fixed;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    height:100%;
+                    background: rgba(0,0,0,0.5);
+                    justify-content:center;
+                    align-items:center;
+                    z-index:9999;">
+                    <div style="background:#ede1f9; padding:20px; border-radius:12px; width:200px; text-align:center;">
+                        <h3>貼文or日記</h3>
+                        <button id="dailyShort"
+                            style="border-radius:12px; margin:8px; padding:8px 12px; background: #ffc0cb; border: none;">日常貼文</button>
+                        <button id="dailyLong"
+                            style="border-radius:12px; margin:8px; padding:8px 12px; background: #ffc0cb; border: none;">日記</button>
+                        <br>
+                        <button id="dailyCancel"
+                            style="border-radius:12px; margin-top:12px; padding:8px 12px; background:#ffc0cb; border: none;">取消</button>
+                    </div>
+                </div>
+
+
+                <div class="post-feed">
+                    <!-- 貼文清單會插在這 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 設定頁面 -->
+        <div id="page-settings" class="page" style="display:none;">
+            <!-- 頁面標題 -->
+            <div class="page-header">Setting</div>
+
+            <div class="settings-content">
+                <!-- API Key -->
+                <label for="apiKey">API Key</label>
+                <input type="text" id="apiKey" placeholder="請輸入 Gemini API Key">
+
+                <!-- 取得模型 -->
+                <button id="fetchModelsBtn">🔍 取得可用模型</button>
+
+                <!-- 模型選擇 (先隱藏，等拿到清單再顯示) -->
+                <div id="modelSection" style="display:none;">
+                    <label for="apiModel">選擇模型</label>
+                    <select id="apiModel"></select>
+                </div>
+
+                <!-- 儲存 -->
+                <button id="saveSettingsBtn">💾 儲存設定</button>
+            </div>
+            <div class="backup-section">
+                <h4>聊天備份/還原/刪除</h4>
+                <button id="exportChatsBtn">⬇️ 匯出聊天資料</button>
+                <input type="file" id="importChatsFile" accept=".json" style="display:none">
+                <button id="importChatsBtn">⬆️ 匯入聊天資料</button>
+                <button id="deleteHistory">🗑️ 刪除所有紀錄</button>
+            </div>
+            <br>
+            <div class="storage-info">
+                <label>儲存空間使用量：</label>
+                <div id="storageDisplay">載入中...</div>
+            </div>
+
+        </div>
+
+
+        <!-- 底部導覽 -->
+        <footer class="footer-nav">
+            <button onclick="switchPage('home')">
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                    fill="#FFFFFF">
+                    <path
+                        d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+                </svg>
+            </button>
+            <button onclick="switchPage('chat')">
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                    fill="#FFFFFF">
+                    <path
+                        d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z" />
+                </svg>
+            </button>
+            <button onclick="switchPage('posts')">
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                    fill="#FFFFFF">
+                    <path
+                        d="M200-200h360v-200h200v-360H200v560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v400L600-120H200Zm80-280v-80h200v80H280Zm0-160v-80h400v80H280Zm-80 360v-560 560Z" />
+                </svg>
+            </button>
+            <button onclick="switchPage('settings')">
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                    fill="#FFFFFF">
+                    <path
+                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+                </svg>
+            </button>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        function switchPage(page) {
+            document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+            document.getElementById(`page-${page}`).style.display = "block";
+            console.log("切換頁面到：", page);
+            console.log("找到元素：", document.getElementById(`page-${page}`));
+
+        }
+
+
+    </script>
+</body>
+
+</html>

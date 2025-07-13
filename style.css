@@ -1,0 +1,849 @@
+/* style.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: linear-gradient(to bottom, #e6def3, #947dbb);
+    box-sizing: border-box;
+}
+
+.page-header {
+    position: fixed;
+    top: 0;
+    /* 如果你需要它吸頂 */
+    left: 0;
+    right: 0;
+    margin: 0;
+    background-color: #8b7ca8;
+    /* 紫色 */
+    color: white;
+    padding: 12px 20px;
+    /* 合併 padding */
+    font-size: 25px;
+    text-align: left;
+    z-index: 10;
+    display: flex;
+    /* 啟用 Flexbox */
+    justify-content: space-between;
+    /* 標題左側，+號右側 */
+    align-items: center;
+    /* 垂直居中 */
+    width: 100%;
+    max-width: 420px;
+    /* 與之前一致 */
+    margin: 0 auto;
+    /* 水平居中 */
+    box-sizing: border-box;
+    height: 60px;
+}
+
+
+.mobile-ui {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.page {
+    box-sizing: border-box;
+}
+
+.page-content {
+    padding-top: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 80px;
+    overflow-y: auto;
+}
+
+#page-chatroom {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    /* 讓子元素垂直排列 */
+    height: 100vh;
+    /* 佔滿整個視窗高度 */
+    max-width: 420px;
+    /* 最大寬度限制 */
+    margin: 0 auto;
+    /* 水平居中 */
+    box-sizing: border-box;
+    padding-bottom: 80px;
+    /* 新增：為底部的 footer 留出空間，chat-input 會顯示在這之上 */
+}
+
+footer.footer-nav {
+    position: fixed;
+    bottom: 0px;
+    align-items: center;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    height: 60px;
+    /* ★ 給導覽列一個固定高度 */
+    max-width: 420px;
+    background: #444c6a;
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+footer.footer-nav button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+footer.footer-nav button:hover {
+    opacity: 0.8;
+}
+
+/* 主頁 */
+
+/* 聊天列表 */
+.addChatBtn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    align-items: center;
+    /* 無效，移至 .page-header */
+    padding: 5px 10px;
+    /* 增加點擊區域 */
+    cursor: pointer;
+    /* 顯示手型指標 */
+}
+
+.addChatBtn:hover {
+    opacity: 0.8;
+    /* 懸停效果 */
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    width: 80%;
+    max-width: 300px;
+    max-height: 450px;
+    overflow-y: auto;
+    /* 內容可滾動 */
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    gap: 8px;
+}
+
+.modal-content input {
+    font-size: 16px;
+    /* 想要更大就調整 */
+}
+
+
+.modal-actions button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background: #4a6fa5;
+    color: white;
+    font-size: 13px;
+}
+
+.chat-list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.chat-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.chat-info {
+    flex: 1;
+}
+
+.chat-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.chat-lastmsg {
+    color: #888;
+    font-size: 14px;
+}
+
+.chat-meta {
+    text-align: right;
+    font-size: 20px;
+}
+
+.modal-content input[type="text"],
+.modal-content textarea {
+    font-size: 16px;
+    /* 你想要的大小，比如14px */
+    line-height: 1.4;
+    /* 行高，不容易擠成一團 */
+    padding: 6px 8px;
+    /* 內邊距，讓字別貼邊 */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    /* 滿版 */
+    box-sizing: border-box;
+    /* 內邊距不超出 */
+    margin-bottom: 8px;
+    /* 下方間距 */
+}
+
+
+/* 聊天室 */
+.chat-header {
+    height: 60px;
+    background: #8b7ca8;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    color: white;
+    z-index: 10;
+    flex-shrink: 0;
+    /* Header 高度固定，不被壓縮 */
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .chat-header {
+        width: 100%;
+        /* 手機上滿寬 */
+    }
+
+    .page-header {
+        width: 100%;
+        /* 手機上滿寬 */
+    }
+
+    /*
+    .chat-input {
+        left: 0;
+         手機上從左側開始
+        right: 0;
+        滿寬
+        bottom: 63px;
+        根據手機調整底部間距
+        padding: 6px;
+        減小內邊距 
+    }
+    */
+}
+
+@media (min-width: 769px) {
+    .chat-header {
+        width: 100%;
+        /* 電腦上保持 28% */
+    }
+
+    .page-header {
+        width: 100%;
+        /* 電腦上滿寬 */
+    }
+
+    /*
+    .chat-input {
+        width: 28%;
+         電腦上滿寬 
+        bottom: 65px;
+    }
+    */
+}
+
+.chat-header .back-btn {
+    background: none;
+    border: none;
+    color: white;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.chat-title {
+    flex: 1;
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    height: calc(100vh - 175px);
+}
+
+.chat-input {
+    background: #647ca1;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    /* Footer 高度固定，不被壓縮 */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    height: 55px;
+}
+
+#messageInput {
+    width: 100%;
+    height: 33px;
+    /* 或 40px，看你要多小 */
+    padding: 4px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    resize: none;
+    transition: border-color 0.2s;
+}
+
+#messageInput:focus {
+    border-color: #999;
+}
+
+
+.chat-input button {
+    width: auto;
+    height: auto;
+    border: none;
+    background: #647ca1;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.moreMenu {
+    display: none;
+    position: absolute;
+    bottom: 120px;
+    /* 根據實際畫面調整 */
+    left: 10px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 10px;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+}
+
+.moreMenu.show {
+    display: flex;
+}
+
+
+.moreMenu button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 0;
+    padding: 8px;
+    width: 100%;
+    background: #d1c4c4;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s ease;
+}
+
+.moreMenu button:hover {
+    background: #c0b3b3;
+}
+
+
+.message {
+    display: flex;
+    align-items: flex-end;
+    margin: 8px;
+    position: relative;
+}
+
+.message.me {
+    justify-content: flex-end;
+}
+
+.message.other {
+    justify-content: flex-start;
+}
+
+.bubble {
+    max-width: 60%;
+    padding: 8px 12px;
+    margin: 0px 8px;
+    word-break: break-word;
+    display: block;
+    /* 與目標一致，確保內容塊級顯示 */
+    font-size: 14px;
+}
+
+.message.me .bubble {
+    background-color: #f8d7da;
+    /* 保留粉色 */
+    text-align: left;
+    position: relative;
+    align-items: flex-start;
+    border-radius: 15px 15px 1px 15px;
+    /* 模仿 chat-bubble-receive 的圓角 */
+    padding: 7px 10px;
+    /* 與目標一致 */
+}
+
+.message.other .bubble {
+    background-color: #fff;
+    /* 保留白色 */
+    text-align: left;
+    border: 1px solid #ccc;
+    position: relative;
+    align-self: flex-end;
+    justify-content: flex-end;
+    border-radius: 15px 15px 15px 1px;
+    /* 模仿 chat-bubble-send 的圓角 */
+    padding: 7px 13px;
+    /* 與目標一致 */
+}
+
+.text {
+    font: #aaa;
+    text-align: left;
+    position: relative;
+    align-items: flex-start;
+}
+
+.time {
+    font-size: 12px;
+    color: #888;
+    margin: 0 4px;
+    align-self: flex-end;
+}
+
+.message.me .time {
+    order: -1;
+    /* 把時間放在泡泡左邊 */
+}
+
+.message.other .time {
+    order: 1;
+    /* 把時間放在泡泡右邊 */
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 4px;
+    object-fit: cover;
+}
+
+
+
+
+/* 朋友圈 */
+
+/* 設定 */
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 75px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.settings-content label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.settings-content input,
+.settings-content select {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.settings-content input:focus,
+.settings-content select:focus {
+    border-color: #f7c7d4;
+    outline: none;
+}
+
+#saveSettingsBtn,
+#cancelSettingsBtn,
+#fetchModelsBtn {
+    margin-top: 12px;
+    background-color: #f7c7d4;
+    color: #333;
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#saveSettingsBtn:hover,
+#fetchModelsBtn:hover {
+    background-color: #f5b0c4;
+}
+
+
+/*聊天室設定按鈕*/
+.chat-settings-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* 置中 */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 12px;
+    max-height: 60vh;
+    /* 限制高度 */
+    overflow-y: auto;
+    /* 內容可滾動 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 70%;
+    max-width: 400px;
+    /* 限制寬度 */
+}
+
+.chat-settings-panel label {
+    display: block;
+    font-weight: bold;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+
+.chat-settings-panel input[type="text"],
+.chat-settings-panel textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+#aiPersonaInput,
+#myPersonaInput {
+    height: 150px;
+    /* 將高度設為 150px，比預設的 120px 高 */
+    min-height: 150px;
+    /* 確保最小高度 */
+}
+
+.chat-settings-panel h3 {
+    margin-bottom: 4px;
+    /* 比預設小 */
+}
+
+.chat-settings-panel h4 {
+    margin-bottom: 4px;
+    /* 比預設小 */
+}
+
+.chat-settings-panel textarea {
+    min-height: 60px;
+    margin-top: 0;
+}
+
+/* 頭貼輸入格下方預覽 */
+.chat-settings-panel .ai-avatar-preview,
+.chat-settings-panel .my-avatar-preview {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.chat-settings-panel button {
+    margin: 12px 4px 0 0;
+    padding: 8px 16px;
+}
+
+#saveSettingsBtn2 {
+    margin-top: 12px;
+    background-color: #f7c7d4;
+    color: #333;
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#saveSettingsBtn2:hover {
+    background-color: #f5b0c4;
+}
+
+/*訊息編輯*/
+/* .chat-header button {
+
+    按鈕之間間距 
+}*/
+.chat-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-buttons button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 確保內容水平居中 */
+    width: 40px;
+    /* 統一寬度 */
+    height: 40px;
+    /* 統一高度 */
+    line-height: 40px;
+    /* 與高度匹配，修正基線 */
+}
+
+.chat-settings-btn,
+.edit-btn,
+.delete-btn,
+.cancel-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.edit-btn:hover,
+.delete-btn:hover,
+.cancel-btn:hover,
+.chat-settings-btn:hover {
+    opacity: 0.8;
+}
+
+/*備份*/
+.backup-section {
+    display: flex;
+    font-size: 15px;
+    font-weight: bold;
+    color: #555;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.backup-section button {
+    background-color: #f7c7d4;
+    color: #333;
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.backup-section button:hover {
+    background-color: #f5b0c4;
+}
+
+
+.storage-info {
+    display: flex;
+    gap: 8px;
+    /* 你說的 gpa 8px 應是 gap 打錯？這樣兩個項目間有間距 */
+    padding: 8px;
+    font-size: 15px;
+    color: #555;
+    font-weight: bold;
+    /* 稍微粗體像 h4 */
+    background-color: none;
+    /* 淺背景，看起來有區塊感 */
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    flex-direction: column;
+}
+
+/*動態*/
+.page-fre {
+    padding-top: 70px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 70px;
+    overflow-y: auto;
+}
+
+.photo-header {
+    position: relative;
+}
+
+.post-bg {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.post-avatar {
+    position: absolute;
+    bottom: -20px;
+    left: 10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.post-avatar-mini {
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+
+.post-create {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.post-create button {
+    background-color: #ffc0cb;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+.post {
+    background: #fff;
+    border-radius: 12px;
+    margin: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post .content {
+    margin-bottom: 8px;
+}
+
+.post .footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: gray;
+}
+
+.post .footer .like {
+    cursor: pointer;
+}
+
+.post .footer .like.liked {
+    color: red;
+}
+
+.nickname {
+    position: absolute;
+    bottom: -25px;
+    left: 80px;
+    background: none;
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/*貼文的暱稱*/
+.nickname2 {
+    font-size: 13px;
+}
+
+.post-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.post-card-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-card-nickname {
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+.post-card-time {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+}
+
+.post-card-content {
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.image-message {
+    max-width: 150px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 5px;
+}
