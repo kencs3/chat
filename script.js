@@ -137,10 +137,9 @@ function openChat(id, name) {
     const history = JSON.parse(localStorage.getItem(`chat-${id}`) || "[]");
     history.forEach(msg => appendMessage(msg));
 
-    // 進入聊天室自動捲到底
-    setTimeout(() => {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }, 0);
+    // ✅ 全部加完再 scroll 到底
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
 
     if (chat?.aiAvatar) {
         const avatarImg = document.querySelector(".chat-room-avatar");
@@ -216,7 +215,6 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
 
     input.value = "";
-    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
 
     // 🤖 插入 AI 正在輸入中
     const typing = document.createElement("div");
@@ -227,7 +225,6 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
         <div class="time">${formatTime()}</div>
     `;
     document.getElementById("messages").appendChild(typing);
-    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
 
     // 🧠 建立 prompt
     const systemPrompt = `
