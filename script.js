@@ -138,7 +138,9 @@ function openChat(id, name) {
     history.forEach(msg => appendMessage(msg));
 
     // ✅ 全部加完再 scroll 到底
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100); // 給予100毫秒的延遲，可以根據實際效果調整
 
 
     if (chat?.aiAvatar) {
@@ -399,7 +401,7 @@ function appendMessage(msg) {
 
     divWrapper.appendChild(div);
     messages.appendChild(divWrapper);
-    messages.scrollTop = messages.scrollHeight;
+    //messages.scrollTop = messages.scrollHeight;
 
     // 在 DOM 元素添加到頁面後，批量綁定語音事件
     // 使用 setTimeout(0) 確保 DOM 渲染完成
@@ -614,12 +616,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const editBtn = document.getElementById("editModeBtn");
     const deleteBtn = document.getElementById("deleteModeBtn");
     const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const messagesContainer = document.getElementById("messages");
 
     editBtn.addEventListener("click", () => {
         isEditMode = !isEditMode;
 
         if (isEditMode) {
             alert("進入編輯模式，點選泡泡直接編輯，完成後再點儲存");
+            const currentScrollTop = messagesContainer.scrollTop;
 
             editBtn.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
@@ -632,6 +636,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 b.contentEditable = "true";
                 b.style.border = "2px dashed DarkSlateBlue";
             });
+
+            setTimeout(() => {
+                messagesContainer.scrollTop = currentScrollTop;
+            }, 0);
 
         } else { // 編輯模式關閉時的邏輯
             editBtn.innerHTML = `
@@ -706,6 +714,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(allMessages));
             alert("已儲存並退出編輯模式");
+            // ✅ 儲存後重新載入當前聊天室並滾動到底部
+            // 確保 currentChatId 和 chat title 是可用的
+            if (currentChatId) {
+                const currentChatName = document.querySelector(".chat-title").innerText;
+                openChat(currentChatId, currentChatName);
+            }
         }
     }); // editBtn.addEventListener("click") 的結束
 
