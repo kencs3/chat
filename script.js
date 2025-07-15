@@ -176,6 +176,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     const contextLength = chat.contextLength || 3;
     const recentMessages = history.slice(-contextLength);
 
+
     // 🔁 對話紀錄文字格式
     let chatHistoryText = "";
     recentMessages.forEach(m => {
@@ -215,6 +216,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     appendMessage(myMsg);
     history.push(myMsg);
     localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
+    scrollToBottom(); // ✅ 傳訊息後馬上捲到底
 
     input.value = "";
 
@@ -299,6 +301,7 @@ ${chatHistoryText}
             appendMessage(aiMsg);
             history.push(aiMsg);
             localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
+            scrollToBottom(); // ✅ AI 回覆後再捲到底
         }
 
     } catch (err) {
@@ -415,6 +418,7 @@ function appendMessage(msg) {
             }
         });
     }, 0); // 延遲執行，確保元素已在 DOM 中
+    scrollToBottom(); // ✅ 每加一則訊息都自動到底部
 }
 
 
@@ -618,6 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
     const messagesContainer = document.getElementById("messages");
 
+
     editBtn.addEventListener("click", () => {
         isEditMode = !isEditMode;
 
@@ -638,8 +643,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             setTimeout(() => {
-                messagesContainer.scrollTop = currentScrollTop;
-            }, 0);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 50);
 
         } else { // 編輯模式關閉時的邏輯
             editBtn.innerHTML = `
@@ -1857,6 +1862,14 @@ function getLocalStorageSize() {
         }
     }
     return total; // 單位：字元（大約 1 char = 1 byte）
+}
+
+// 回到底部
+function scrollToBottom() {
+    const messagesContainer = document.getElementById("messages");
+    setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 50);
 }
 
 
