@@ -86,7 +86,7 @@ footer.footer-nav {
     height: 60px;
     /* ★ 給導覽列一個固定高度 */
     max-width: 420px;
-    background: #444c6a;
+    background: #5a6485;
     display: flex;
     justify-content: space-around;
     z-index: 100;
@@ -308,11 +308,10 @@ footer.footer-nav button:hover {
 }
 
 .chat-input {
-    background: #647ca1;
+    background: #607598;
     padding: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
     flex-shrink: 0;
     /* Footer 高度固定，不被壓縮 */
     box-sizing: border-box;
@@ -348,11 +347,13 @@ footer.footer-nav button:hover {
     width: auto;
     height: auto;
     border: none;
-    background: #647ca1;
-    font-size: 1.2rem;
+    background: #607598;
+    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 8px;
+    gap: 15px;
 }
 
 .moreMenu {
