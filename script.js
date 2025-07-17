@@ -135,6 +135,15 @@ function openChat(id, name) {
     messagesContainer.innerHTML = "";
 
     const history = JSON.parse(localStorage.getItem(`chat-${id}`) || "[]");
+
+
+    // ✅ 加這段！照 timestamp（或 fallback）排序
+    history.sort((a, b) => {
+        const aTime = a.timestamp ?? (typeof a.id === 'number' ? a.id : 0);
+        const bTime = b.timestamp ?? (typeof b.id === 'number' ? b.id : 0);
+        return aTime - bTime;
+    });
+
     history.forEach(msg => appendMessage(msg));
 
     // ✅ 全部加完再 scroll 到底
@@ -161,73 +170,114 @@ document.querySelector(".back-btn").addEventListener("click", () => {
     document.getElementById("page-chat").style.display = "block";
 });
 
-// 傳送
-// 傳送按鈕事件監聽器
-document.getElementById("sendBtn").addEventListener("click", async () => {
+// ✅ 暫存 fake 訊息陣列
+let fakeMessages = [];
+
+//假的傳送
+document.getElementById("fakeSendBtn").addEventListener("click", () => {
+    console.log("✅ 假傳送被點了！");
+
     const input = document.getElementById("messageInput");
     let text = input.value.trim();
-    if (!text && !pendingImage) return; // 沒文字沒圖片就不送
+
+    console.log("✉️ 訊息是：", text); // ⬅️ 再使用 text
+    console.log("🧪 目前 fakeMessages：", fakeMessages);
+
+    if (!text && !pendingImage) return;
 
     const time = formatTime();
     const currentId = window.currentChatId;
     const chat = chats.find(c => c.id === currentId);
-    const history = JSON.parse(localStorage.getItem(`chat-${currentId}`) || "[]");
 
-    const contextLength = chat.contextLength || 3;
-    const recentMessages = history.slice(-contextLength);
+    let historyRaw = localStorage.getItem(`chat-${currentId}`);
+    let history = [];
+
+    try {
+        history = JSON.parse(historyRaw);
+        if (!Array.isArray(history)) history = [];
+    } catch (e) {
+        history = [];
+    }
 
 
-    // 🔁 對話紀錄文字格式
-    let chatHistoryText = "";
-    recentMessages.forEach(m => {
-        const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
-        chatHistoryText += `${who}：${m.text}\n`;
-    });
-
-    // 🎤 語音訊息處理
+    // 語音處理邏輯一樣
     let isVoiceMessage = text.startsWith('語音：') && text.length > 5;
     let voiceContent = isVoiceMessage ? text.substring(5) : null;
     let timeDisplay = null;
     if (isVoiceMessage) {
         const charCount = voiceContent.length;
-        const seconds = Math.max(1, Math.ceil(charCount / 2)); // 每2字1秒
+        const seconds = Math.max(1, Math.ceil(charCount / 2));
         timeDisplay = `00:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // 🖼️ 加上待處理圖片
+    // 圖片也處理一樣
     let finalText = text;
     if (pendingImage) {
         finalText += `\n${pendingImage}`;
         pendingImage = null;
     }
-    finalText = finalText.replace(/\[圖片：/g, "\n[圖片："); // 保證圖片描述獨立成行
+    finalText = finalText.replace(/\[圖片：/g, "\n[圖片：");
 
-    // 📨 顯示我方訊息
     const id = Date.now() + Math.random();
-    const myMsg = {
+    const fakeMsg = {
         id,
         text: finalText,
         time,
         sender: "me",
         isVoice: isVoiceMessage,
         voiceContent,
-        timeDisplay
+        timeDisplay,
+        timestamp: Date.now()
     };
-    appendMessage(myMsg);
-    history.push(myMsg);
-    localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
-    scrollToBottom(); // ✅ 傳訊息後馬上捲到底
+    appendMessage(fakeMsg);
+    fakeMessages.push(fakeMsg);
+    scrollToBottom();
 
     input.value = "";
+});
+
+// 傳送
+document.getElementById("sendBtn").addEventListener("click", async () => {
+    console.log("✅ sendBtn 被點了！");
+
+    if (fakeMessages.length === 0) return;
+
+    const currentId = window.currentChatId;
+    const chat = chats.find(c => c.id === currentId);
+    let historyRaw = localStorage.getItem(`chat-${currentId}`);
+    let history = [];
+
+    try {
+        history = JSON.parse(historyRaw);
+        if (!Array.isArray(history)) history = [];
+    } catch (e) {
+        history = [];
+    }
+
+
+    // 🔁 組出對話紀錄
+    let chatHistoryText = "";
+    fakeMessages.forEach(m => {
+        const who = chat.myName || "你";
+        chatHistoryText += `${who}：${m.text}\n`;
+    });
+    let text = fakeMessages.map(m => m.text).join("\n");
 
     // 🤖 插入 AI 正在輸入中
     const typing = document.createElement("div");
     typing.className = "message other";
     typing.innerHTML = `
-        <img src="${chat.aiAvatar || 'default-avatar.png'}" class="avatar">
-        <div class="bubble" style="color:#888;">對方正在輸入中...</div>
-        <div class="time">${formatTime()}</div>
-    `;
+  <img src="${chat.aiAvatar || 'default-avatar.png'}" class="avatar">
+  <div class="bubble" style="color:#888; display: flex; align-items: center; gap: 5px;">
+    <svg id="dots" width="40px" height="18px" viewBox="0 0 132 58" xmlns="http://www.w3.org/2000/svg">
+      <circle id="dot1" fill="#A3A3A3" cx="25" cy="30" r="13" />
+      <circle id="dot2" fill="#A3A3A3" cx="65" cy="30" r="13" />
+      <circle id="dot3" fill="#A3A3A3" cx="105" cy="30" r="13" />
+    </svg>
+  </div>
+  <div class="time">${formatTime()}</div>
+`;
+
     document.getElementById("messages").appendChild(typing);
 
     // 🧠 建立 prompt
@@ -276,6 +326,7 @@ ${chatHistoryText}
                         ]
                     }
                 ]
+
             })
         });
 
@@ -296,7 +347,11 @@ ${chatHistoryText}
                 id: replyId,
                 text: cleanReply,
                 time: replyTime,
-                sender: "ai"
+                sender: "ai",
+                isVoice: false,
+                voiceContent: null,
+                timeDisplay: null,
+                timestamp: Date.now()
             };
             appendMessage(aiMsg);
             history.push(aiMsg);
@@ -304,15 +359,20 @@ ${chatHistoryText}
             scrollToBottom(); // ✅ AI 回覆後再捲到底
         }
 
+        // 把 fakeMessages 加進 history（但不再顯示）
+        for (const m of fakeMessages) {
+            history.push(m);
+        }
+        localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
+        fakeMessages = [];
+
+
     } catch (err) {
         typing.remove();
         console.error("❌ Gemini 回覆失敗", err);
         alert("⚠️ Gemini 回覆失敗，請檢查 API Key 或模型！");
     }
 });
-
-
-
 
 // 畫泡泡
 // ✅ appendMessage：根據訊息格式自動渲染正確內容
@@ -921,20 +981,51 @@ document.addEventListener("DOMContentLoaded", () => {
                 postBg: localStorage.getItem("postBg") || "https://i.meee.com.tw/7RTGyUf.jpg"
             }
         };
+
+        // 針對每個聊天室處理訊息
         data.chats.forEach(chat => {
-            data.messages[chat.id] = JSON.parse(localStorage.getItem(`chat-${chat.id}`) || "[]");
+            const messages = JSON.parse(localStorage.getItem(`chat-${chat.id}`) || "[]");
+
+            // 補齊每則訊息的 timestamp、語音欄位
+            const updatedMessages = messages.map(msg => {
+                // ✅ timestamp
+                if (!msg.timestamp) {
+                    msg.timestamp = typeof msg.id === "number" ? msg.id : Date.now();
+                }
+
+                // ✅ 語音欄位補齊
+                if (msg.isVoice === undefined) {
+                    const match = msg.text?.match(/^\[語音：(.*)\]$/);
+                    if (match) {
+                        msg.isVoice = true;
+                        msg.voiceContent = match[1];
+                        const len = match[1].length;
+                        msg.timeDisplay = `00:${Math.max(1, Math.ceil(len / 2)).toString().padStart(2, '0')}`;
+                    } else {
+                        msg.isVoice = false;
+                        msg.voiceContent = null;
+                        msg.timeDisplay = null;
+                    }
+                }
+
+                return msg;
+            });
+
+            data.messages[chat.id] = updatedMessages;
         });
 
+        // 建立 JSON Blob 並下載
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = "my-chats-backup.json";
+        a.download = "myChats.backup.json";
         a.click();
 
         alert("已經成功匯出！");
     });
+
 
     // 點擊匯入按鈕
     document.getElementById("importChatsBtn").addEventListener("click", () => {
@@ -960,6 +1051,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.messages[chatId] = data.messages[chatId].map(msg => {
                         // 統一 ID 為字串
                         msg.id = String(msg.id);
+
+                        if (!msg.timestamp) {
+                            msg.timestamp = typeof msg.id === 'number' ? msg.id : Date.now();
+                        }
 
                         // 補語音欄位（只補 undefined 的，不會動到正常資料）
                         if (msg.isVoice === undefined) {
