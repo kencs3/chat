@@ -267,18 +267,20 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     const typing = document.createElement("div");
     typing.className = "message other";
     typing.innerHTML = `
-  <img src="${chat.aiAvatar || 'default-avatar.png'}" class="avatar">
-  <div class="bubble" style="color:#888; display: flex; align-items: center; gap: 5px;">
-    <svg id="dots" width="40px" height="18px" viewBox="0 0 132 58" xmlns="http://www.w3.org/2000/svg">
-      <circle id="dot1" fill="#A3A3A3" cx="25" cy="30" r="13" />
-      <circle id="dot2" fill="#A3A3A3" cx="65" cy="30" r="13" />
-      <circle id="dot3" fill="#A3A3A3" cx="105" cy="30" r="13" />
-    </svg>
-  </div>
-  <div class="time">${formatTime()}</div>
-`;
+    <img src="${chat.aiAvatar || 'default-avatar.png'}" class="avatar">
+    <div class="bubble" style="color:#888; display: flex; align-items: center; gap: 5px;">
+        <svg id="dots" width="40px" height="18px" viewBox="0 0 132 58" xmlns="http://www.w3.org/2000/svg">
+        <circle id="dot1" fill="#A3A3A3" cx="25" cy="30" r="13" />
+        <circle id="dot2" fill="#A3A3A3" cx="65" cy="30" r="13" />
+        <circle id="dot3" fill="#A3A3A3" cx="105" cy="30" r="13" />
+        </svg>
+    </div>
+    <div class="time">${formatTime()}</div>
+    `;
 
     document.getElementById("messages").appendChild(typing);
+    scrollToBottom(); // 👈 加這行讓 AI 輸入中泡泡也會自動滑到底
+
 
     // 🧠 建立 prompt
     const systemPrompt = `
