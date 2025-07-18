@@ -101,7 +101,18 @@
                         <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
                     </svg>
                 </button>
-                <textarea id="messageInput" rows="2" placeholder="輸入訊息..." style="resize: none;"></textarea>
+
+                <div class="chat-input-container">
+                    <textarea id="messageInput" rows="1" placeholder="輸入訊息..." style="resize: none;"></textarea>
+                    <button id="stickerBtn" class="sticker-btn" title="貼圖">
+                        <!-- 你可以放任意 SVG 圖示 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#434343">
+                            <path
+                                d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm140 260q68 0 123.5-38.5T684-400h-66q-22 37-58.5 58.5T480-320q-43 0-79.5-21.5T342-400h-66q25 63 80.5 101.5T480-260Zm0 180q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z" />
+                        </svg>
+                    </button>
+                </div>
                 <button id="sendBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                         fill="#FFFFFF">
@@ -141,6 +152,27 @@
                     </svg>
                 </button>
                 <!-- 你可以再加更多 -->
+            </div>
+        </div>
+        <!-- 貼圖面板 -->
+        <div id="stickerPanel" class="sticker-panel" style="display:none;">
+            <div class="sticker-header">
+                <span>貼圖</span>
+                <button id="openAddStickerModal" class="add-sticker-btn">＋</button>
+            </div>
+            <div class="sticker-grid" id="stickerGrid">
+                <!-- 預設貼圖會在 JS 中生成 -->
+            </div>
+        </div>
+
+        <!-- 新增貼圖彈窗（如圖二） -->
+        <div id="addStickerModal" class="sticker-modal" style="display:none;">
+            <div class="sticker-modal-content">
+                <h3>加入新貼圖</h3>
+                <input id="stickerName" placeholder="如：開心" />
+                <input id="stickerURL" placeholder="圖片 URL" />
+                <div class="sticker-preview">預覽圖片</div>
+                <button id="confirmAddSticker">儲存</button>
             </div>
         </div>
 

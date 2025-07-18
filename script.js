@@ -145,6 +145,12 @@ function openChat(id, name) {
     });
 
     history.forEach(msg => appendMessage(msg));
+    // ✅ 還原未送出的訊息（假訊息）
+    const unsentKey = `unsent-${currentChatId}`;
+    const savedUnsent = localStorage.getItem(unsentKey);
+    fakeMessages = savedUnsent ? JSON.parse(savedUnsent) : [];
+    fakeMessages.forEach(msg => appendMessage(msg));
+
 
     // ✅ 全部加完再 scroll 到底
     setTimeout(() => {
@@ -189,16 +195,6 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
     const currentId = window.currentChatId;
     const chat = chats.find(c => c.id === currentId);
 
-    let historyRaw = localStorage.getItem(`chat-${currentId}`);
-    let history = [];
-
-    try {
-        history = JSON.parse(historyRaw);
-        if (!Array.isArray(history)) history = [];
-    } catch (e) {
-        history = [];
-    }
-
 
     // 語音處理邏輯一樣
     let isVoiceMessage = text.startsWith('語音：') && text.length > 5;
@@ -229,11 +225,28 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
         timeDisplay,
         timestamp: Date.now()
     };
+
+
+    let historyRaw = localStorage.getItem(`chat-${currentId}`);
+    let history = [];
+
+    try {
+        history = JSON.parse(historyRaw);
+        if (!Array.isArray(history)) history = [];
+    } catch (e) {
+        history = [];
+    }
+
+    //history.push(fakeMsg);
+    //localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
     appendMessage(fakeMsg);
     fakeMessages.push(fakeMsg);
-    scrollToBottom();
+    // ✅ 儲存未送出的訊息
+    localStorage.setItem(`unsent-${currentId}`, JSON.stringify(fakeMessages));
 
     input.value = "";
+    scrollToBottom();
+
 });
 
 // 傳送
@@ -357,16 +370,25 @@ ${chatHistoryText}
             };
             appendMessage(aiMsg);
             history.push(aiMsg);
+
+            // 將 fakeMessages 全部推入 history
+            for (const m of fakeMessages) {
+                history.push(m);
+            }
+
             localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
+            // ✅ 清除假訊息的記憶和儲存
+            fakeMessages = [];
+            localStorage.removeItem(`unsent-${currentId}`);
             scrollToBottom(); // ✅ AI 回覆後再捲到底
         }
 
         // 把 fakeMessages 加進 history（但不再顯示）
-        for (const m of fakeMessages) {
-            history.push(m);
-        }
-        localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
-        fakeMessages = [];
+        // for (const m of fakeMessages) {
+        // history.push(m);
+        // }
+        // localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
+        // fakeMessages = [];
 
 
     } catch (err) {
@@ -614,6 +636,80 @@ document.addEventListener("DOMContentLoaded", () => {
             menu.style.display = "none"; // 隱藏
         }
     });
+
+    // ===================== stickerBtn ===================
+    const stickerBtn = document.getElementById("stickerBtn");
+    const stickerPanel = document.getElementById("stickerPanel");
+    const addStickerModal = document.getElementById("addStickerModal");
+    const openAddStickerModalBtn = document.getElementById("openAddStickerModal");
+    const confirmAddStickerBtn = document.getElementById("confirmAddSticker");
+    const stickerGrid = document.getElementById("stickerGrid");
+
+    // 預設貼圖
+    const defaultStickers = [
+        { name: "誰在喵本大王", url: "/path/to/sticker1.png" },
+        { name: "尊嘟假嘟", url: "/path/to/sticker2.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" },
+        { name: "我操了", url: "/path/to/sticker3.png" }
+        // ...更多預設貼圖
+    ];
+
+    // 從 localStorage 或預設載入貼圖
+    function loadStickers() {
+        const saved = JSON.parse(localStorage.getItem("customStickers") || "[]");
+        const all = [...defaultStickers, ...saved];
+        stickerGrid.innerHTML = "";
+        for (const s of all) {
+            const img = document.createElement("img");
+            img.src = s.url;
+            img.alt = s.name;
+            img.title = s.name;
+            stickerGrid.appendChild(img);
+        }
+    }
+
+    // 顯示/隱藏貼圖面板
+    stickerBtn.addEventListener("click", () => {
+        stickerPanel.style.display = stickerPanel.style.display === "none" ? "block" : "none";
+    });
+
+    // 打開新增貼圖視窗
+    openAddStickerModalBtn.addEventListener("click", () => {
+        addStickerModal.style.display = addStickerModal.style.display === "none" ? "block" : "none";
+    });
+
+    // 儲存自訂貼圖
+    confirmAddStickerBtn.addEventListener("click", () => {
+        const name = document.getElementById("stickerName").value.trim();
+        const url = document.getElementById("stickerURL").value.trim();
+        if (name && url) {
+            const custom = JSON.parse(localStorage.getItem("customStickers") || "[]");
+            custom.push({ name, url });
+            localStorage.setItem("customStickers", JSON.stringify(custom));
+            loadStickers();
+            addStickerModal.style.display = "none";
+        }
+    });
+    // 即時預覽貼圖功能
+    document.getElementById("stickerURL").addEventListener("input", (e) => {
+        const url = e.target.value.trim();
+        const preview = document.querySelector(".sticker-preview");
+        if (url) {
+            preview.innerHTML = `<img src="${url}" alt="preview">`;
+        } else {
+            preview.textContent = "預覽";
+        }
+    });
+
+
+    // 初始化
+    loadStickers();
 
     // ================ sendImage ================
 
