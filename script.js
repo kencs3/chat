@@ -83,7 +83,8 @@ const defaultStickers = [
     { name: "不要難過啦", url: "https://files.catbox.moe/2830vu.jpeg" },
     { name: "摸摸小狗的頭", url: "https://files.catbox.moe/2hutp7.jpeg" },
     { name: "狗被曬", url: "https://files.catbox.moe/shtpns.jpeg" },
-    { name: "小狗要融化了", url: "https://files.catbox.moe/phacu7.jpeg" }
+    { name: "小狗要融化了", url: "https://files.catbox.moe/phacu7.jpeg" },
+    { name: "晚安", url: "https://files.catbox.moe/p1abmu.jpeg" }
     // ...更多預設貼圖
 ];
 
