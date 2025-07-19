@@ -13,7 +13,7 @@ const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
 // 預設貼圖
 const defaultStickers = [
-    { name: "小狗期待的目光", url: "https://files.catbox.moe/mnfk0l.jpg" },
+    { name: "小狗好奇的目光", url: "https://files.catbox.moe/mnfk0l.jpg" },
     { name: "小狗委屈的憋著眼淚", url: "https://files.catbox.moe/t9o84s.jpg" },
     { name: "小狗哭出來了", url: "https://files.catbox.moe/hpx10j.jpg" },
     { name: "小狗很愛你", url: "https://files.catbox.moe/4q2izm.jpg" },
@@ -523,6 +523,8 @@ function appendMessage(msg) {
         const stickerMatch = msg.text.match(/^<貼圖:\s*(.+?)\s*\|\s*(https?:\/\/\S+)>$/);
         if (stickerMatch) {
             const url = stickerMatch[2].trim();
+            div.dataset.raw = msg.text; // ✅ 加這一行！
+
             bubbleContentHtml += `
         <img src="${url}" alt="sticker" style="max-width: 150px; border-radius: 10px;" />
     `;
@@ -768,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // ✅ 假傳送格式：<貼圖: 描述\n連結>
                 const fakeStickerMsg = {
                     id,
-                    text: `<貼圖: ${s.name}|${s.url}>`,
+                    text: `<貼圖: ${s.name} | ${s.url}>`,
                     time,
                     sender: "me",
                     isVoice: false,
@@ -952,6 +954,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const time = m.querySelector(".time").innerText;
                 const sender = m.classList.contains("me") ? "me" : "ai";
                 const bubble = m.querySelector(".bubble");
+
+                const rawText = m.dataset.raw;
+                if (rawText?.startsWith("<貼圖:")) {
+                    allMessages.push({
+                        id, time, sender,
+                        text: rawText, // ✅ 直接使用
+                        isVoice: false,
+                        voiceContent: null,
+                        timeDisplay: null
+                    });
+                    return; // ✅ 跳過重建
+                }
 
                 let reconstructedTextLines = []; // 用於重建最終的 msg.text
 
