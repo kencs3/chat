@@ -11,6 +11,82 @@ window.currentChatId = currentChatId;
 
 const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
+// 預設貼圖
+const defaultStickers = [
+    { name: "小狗期待的目光", url: "https://files.catbox.moe/mnfk0l.jpg" },
+    { name: "小狗委屈的憋著眼淚", url: "https://files.catbox.moe/t9o84s.jpg" },
+    { name: "小狗哭出來了", url: "https://files.catbox.moe/hpx10j.jpg" },
+    { name: "小狗很愛你", url: "https://files.catbox.moe/4q2izm.jpg" },
+    { name: "小狗驕傲", url: "https://files.catbox.moe/ksjp5l.jpg" },
+    { name: "小狗牙齒痛", url: "https://files.catbox.moe/u4ylip.jpg" },
+    { name: "小狗舉著愛心", url: "https://files.catbox.moe/out35e.jpg" },
+    { name: "小狗送你花花", url: "https://files.catbox.moe/zy5v8s.jpg" },
+    { name: "小狗吃手指", url: "https://files.catbox.moe/9h9gps.jpg" },
+    { name: "小狗要親臉頰", url: "https://files.catbox.moe/lx1dz3.jpg" },
+    { name: "小狗問你好不好呀", url: "https://files.catbox.moe/q7h1ai.jpg" },
+    { name: "小狗跟你貼貼", url: "https://files.catbox.moe/f0d3t9.jpg" },
+    { name: "小狗被你哄好了", url: "https://files.catbox.moe/qkxmzx.jpg" },
+    { name: "小狗拿著碗", url: "https://files.catbox.moe/b1qw59.jpg" },
+    { name: "小狗湊近看你", url: "https://files.catbox.moe/u4x59r.jpg" },
+    { name: "小狗得意", url: "https://files.catbox.moe/c93pkw.jpg" },
+    { name: "狗仗人勢", url: "https://files.catbox.moe/8tzks1.jpg" },
+    { name: "小狗親貓咪", url: "https://files.catbox.moe/ed1dlq.jpg" },
+    { name: "喜歡貓咪", url: "https://files.catbox.moe/m4yfr2.jpg" },
+    { name: "小狗送你花花", url: "https://files.catbox.moe/ejussa.jpg" },
+    { name: "滿足地嘆氣", url: "https://files.catbox.moe/ejussa.jpg" },
+    { name: "薯條全炫我嘴裡", url: "https://files.catbox.moe/dvikcf.jpg" },
+    { name: "小狗裝扮成薯條的樣子", url: "https://files.catbox.moe/9u95x8.jpg" },
+    { name: "小狗吃薯條", url: "https://files.catbox.moe/27wo5f.jpg" },
+    { name: "小狗晚上難過的看手機", url: "https://files.catbox.moe/lfbka8.jpg" },
+    { name: "小狗太累了", url: "https://files.catbox.moe/3wxy6l.jpg" },
+    { name: "小狗舔你", url: "https://files.catbox.moe/aui57o.jpg" },
+    { name: "小狗大哭", url: "https://files.catbox.moe/89wi8s.jpg" },
+    { name: "得意的小狗", url: "https://files.catbox.moe/djujrp.jpg" },
+    { name: "小狗開心地搖尾巴", url: "https://files.catbox.moe/zueq8b.jpeg" },
+    { name: "小狗要抱抱", url: "https://files.catbox.moe/5gexwp.jpeg" },
+    { name: "小狗害羞", url: "https://files.catbox.moe/j1oup6.jpeg" },
+    { name: "小狗心動", url: "https://files.catbox.moe/zkh671.jpeg" },
+    { name: "小狗給你心心", url: "https://files.catbox.moe/8li96f.jpeg" },
+    { name: "小狗崇拜的樣子", url: "https://files.catbox.moe/svegg0.jpeg" },
+    { name: "小狗：別走看看我", url: "https://files.catbox.moe/r5jc7r.jpeg" },
+    { name: "小狗親親", url: "https://files.catbox.moe/2ez313.jpeg" },
+    { name: "小狗等待回覆ing", url: "https://files.catbox.moe/cik7oq.jpeg" },
+    { name: "小狗：我好想你啊", url: "https://files.catbox.moe/swr3au.jpeg" },
+    { name: "小狗：希望你幸福", url: "https://files.catbox.moe/1j0rgk.jpeg" },
+    { name: "小狗在思考", url: "https://files.catbox.moe/tgkoji.jpeg" },
+    { name: "小狗哭哭", url: "https://files.catbox.moe/4n4cw5.jpeg" },
+    { name: "小狗準備調皮", url: "https://files.catbox.moe/gea6bg.jpeg" },
+    { name: "要收留小狗嗎", url: "https://files.catbox.moe/h0uil5.jpeg" },
+    { name: "心碎小狗求收留", url: "https://files.catbox.moe/evo4h7.jpeg" },
+    { name: "寶寶我想你了", url: "https://files.catbox.moe/5btq5j.jpeg" },
+    { name: "小狗說hello", url: "https://files.catbox.moe/sal03g.jpeg" },
+    { name: "小狗說早安", url: "https://files.catbox.moe/7exhb2.jpeg" },
+    { name: "小狗在諂媚", url: "https://files.catbox.moe/3g4vnh.jpeg" },
+    { name: "小狗要一起玩", url: "https://files.catbox.moe/n0hz8x.jpeg" },
+    { name: "摸摸小狗的頭", url: "https://files.catbox.moe/66ny10.jpeg" },
+    { name: "小狗在睡覺", url: "https://files.catbox.moe/2pza5q.jpeg" },
+    { name: "我...喜歡你", url: "https://files.catbox.moe/2krll0.jpeg" },
+    { name: "生日快樂", url: "https://files.catbox.moe/bbgesx.jpeg" },
+    { name: "小禮物來囉", url: "https://files.catbox.moe/6836f0.jpeg" },
+    { name: "許個願望", url: "https://files.catbox.moe/yi85dg.jpeg" },
+    { name: "請我吃那個", url: "https://files.catbox.moe/vfwoc9.jpeg" },
+    { name: "在悄悄地想你", url: "https://files.catbox.moe/n3kkn3.jpeg" },
+    { name: "花花送你", url: "https://files.catbox.moe/z6a75l.jpeg" },
+    { name: "心都給你啊", url: "https://files.catbox.moe/y6byty.jpeg" },
+    { name: "偷心小狗開始工作", url: "https://files.catbox.moe/jlx8jz.jpeg" },
+    { name: "想我了嗎？", url: "https://files.catbox.moe/qab1w6.jpeg" },
+    { name: "好煩", url: "https://files.catbox.moe/7xdmw8.jpeg" },
+    { name: "想要那個", url: "https://files.catbox.moe/whn959.jpg" },
+    { name: "給我點錢好嗎", url: "https://files.catbox.moe/9vi9qn.jpg" },
+    { name: "小狗餓餓", url: "https://files.catbox.moe/a7z2ac.jpg" },
+    { name: "主人歡迎回家", url: "https://files.catbox.moe/wnkboi.jpg" },
+    { name: "不要難過啦", url: "https://files.catbox.moe/2830vu.jpeg" },
+    { name: "摸摸小狗的頭", url: "https://files.catbox.moe/2hutp7.jpeg" },
+    { name: "狗被曬", url: "https://files.catbox.moe/shtpns.jpeg" },
+    { name: "小狗要融化了", url: "https://files.catbox.moe/phacu7.jpeg" }
+    // ...更多預設貼圖
+];
+
 // 新增聊天室
 const addChatBtn = document.getElementById("addChatBtn");
 const addChatModal = document.getElementById("addChatModal");
@@ -186,17 +262,18 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
     const input = document.getElementById("messageInput");
     let text = input.value.trim();
 
-    console.log("✉️ 訊息是：", text); // ⬅️ 再使用 text
-    console.log("🧪 目前 fakeMessages：", fakeMessages);
+    console.log("✉️ 訊息是：", text);
+    console.log("🧪 目前 fakeMessages (fakeSendBtn - before push):", JSON.stringify(fakeMessages));
 
     if (!text && !pendingImage) return;
 
+    // ✅ 新增這行：在每次假傳送前，先清空 fakeMessages
+    // 這確保了 fakeMessages 永遠只包含當前要發送的這一則或幾則訊息
+    fakeMessages = [];
+
     const time = formatTime();
-    const currentId = window.currentChatId;
-    const chat = chats.find(c => c.id === currentId);
+    const currentChatId = window.currentChatId;
 
-
-    // 語音處理邏輯一樣
     let isVoiceMessage = text.startsWith('語音：') && text.length > 5;
     let voiceContent = isVoiceMessage ? text.substring(5) : null;
     let timeDisplay = null;
@@ -206,13 +283,11 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
         timeDisplay = `00:${seconds.toString().padStart(2, '0')}`;
     }
 
-    // 圖片也處理一樣
     let finalText = text;
     if (pendingImage) {
         finalText += `\n${pendingImage}`;
         pendingImage = null;
     }
-    finalText = finalText.replace(/\[圖片：/g, "\n[圖片：");
 
     const id = Date.now() + Math.random();
     const fakeMsg = {
@@ -226,27 +301,12 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
         timestamp: Date.now()
     };
 
-
-    let historyRaw = localStorage.getItem(`chat-${currentId}`);
-    let history = [];
-
-    try {
-        history = JSON.parse(historyRaw);
-        if (!Array.isArray(history)) history = [];
-    } catch (e) {
-        history = [];
-    }
-
-    //history.push(fakeMsg);
-    //localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
-    appendMessage(fakeMsg);
     fakeMessages.push(fakeMsg);
-    // ✅ 儲存未送出的訊息
-    localStorage.setItem(`unsent-${currentId}`, JSON.stringify(fakeMessages));
-
+    console.log("🧪 目前 fakeMessages (fakeSendBtn - after push):", JSON.stringify(fakeMessages));
+    appendMessage(fakeMsg);
+    localStorage.setItem(`unsent-${currentChatId}`, JSON.stringify(fakeMessages));
     input.value = "";
     scrollToBottom();
-
 });
 
 // 傳送
@@ -255,9 +315,9 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
 
     if (fakeMessages.length === 0) return;
 
-    const currentId = window.currentChatId;
-    const chat = chats.find(c => c.id === currentId);
-    let historyRaw = localStorage.getItem(`chat-${currentId}`);
+    const currentChatId = window.currentChatId;
+    const chat = chats.find(c => c.id === currentChatId);
+    let historyRaw = localStorage.getItem(`chat-${currentChatId}`);
     let history = [];
 
     try {
@@ -266,6 +326,18 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     } catch (e) {
         history = [];
     }
+    console.log("📜 載入的 history (sendBtn - after parse):", JSON.stringify(history)); // 新增日誌
+    console.log("🧪 目前 fakeMessages (sendBtn - before history push):", JSON.stringify(fakeMessages)); // 新增日誌
+
+
+    // ✅ 新增這一段：將使用者剛發送的訊息 (fakeMessages) 加入到 history 陣列中
+    // 這樣它們才會被儲存到 localStorage
+    fakeMessages.forEach(m => {
+        console.log("➡️ 將使用者訊息推入 history:", m.id, m.text); // 新增日誌
+
+        history.push(m);
+    });
+    console.log("📜 history (sendBtn - after user messages push):", JSON.stringify(history)); // 新增日誌
 
 
     // 🔁 組出對話紀錄
@@ -302,8 +374,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
 以下是你們剛剛的對話紀錄（僅供參考）：
 ${chatHistoryText}
 
-你可以偶爾使用語音或圖片輔助說話，只有當你覺得非常可愛、有趣，或氣氛需要時才用。
-但請以文字為主。不要頻繁使用圖片或貼圖。
+你可以使用語音或圖片輔助說話，當你覺得非常可愛、有趣，或氣氛需要時才用。
 - 如需要使用語音請用格式：
   [語音：內容]（請單獨一行，且不要加其他文字）
 
@@ -314,9 +385,18 @@ ${chatHistoryText}
   我今天看到這隻小狗好可愛
   [圖片：微笑的小狗]
 
+- 如需要使用貼圖，請使用格式，並且要單獨一行，不要加入其他文字
+  <貼圖: 貼圖描述 | 貼圖圖片URL>
+  例如：
+  <貼圖: 開心狗狗 | https://files.catbox.moe/example_happy_dog.jpg>
+下是你可用的貼圖列表，請僅從中選擇並使用，不要創造新的貼圖：
+${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join('\n')}
+
+
 請記得：
 - 使用 [split] 分段。
 - 千萬不要使用 JSON 格式。
+- 一定要照著格式。
 
 使用者：${chat.myName}，人設：${chat.myPersona}
 請用繁體中文回應。
@@ -357,10 +437,10 @@ ${chatHistoryText}
             const replyTime = formatTime();
             const replyId = Date.now() + Math.random();
 
-            const cleanReply = reply.replace(/https?:\/\/\S+\.(jpg|jpeg|png|gif)/gi, ""); // 移除網址
+            //const cleanReply = reply.replace(/https?:\/\/\S+\.(jpg|jpeg|png|gif)/gi, ""); // 移除網址
             const aiMsg = {
                 id: replyId,
-                text: cleanReply,
+                text: reply,
                 time: replyTime,
                 sender: "ai",
                 isVoice: false,
@@ -369,37 +449,48 @@ ${chatHistoryText}
                 timestamp: Date.now()
             };
             appendMessage(aiMsg);
+            console.log("➡️ 將 AI 訊息推入 history:", aiMsg.id, aiMsg.text); // 新增日誌
+
             history.push(aiMsg);
-
-            // 將 fakeMessages 全部推入 history
-            for (const m of fakeMessages) {
-                history.push(m);
-            }
-
-            localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
-            // ✅ 清除假訊息的記憶和儲存
-            fakeMessages = [];
-            localStorage.removeItem(`unsent-${currentId}`);
-            scrollToBottom(); // ✅ AI 回覆後再捲到底
         }
+        // ✅ 新增這一段：在儲存前對 history 進行去重複化
+        const uniqueHistory = [];
+        const seenIds = new Set();
+        // 從後往前遍歷，保留最新的訊息副本
+        for (let i = history.length - 1; i >= 0; i--) {
+            const msg = history[i];
+            if (!seenIds.has(msg.id)) {
+                uniqueHistory.unshift(msg); // 插入到陣列開頭以保持原始順序
+                seenIds.add(msg.id);
+            }
+        }
+        history = uniqueHistory; // 用去重複後的陣列替換原有的 history
 
-        // 把 fakeMessages 加進 history（但不再顯示）
-        // for (const m of fakeMessages) {
-        // history.push(m);
-        // }
-        // localStorage.setItem(`chat-${currentId}`, JSON.stringify(history));
-        // fakeMessages = [];
+        localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+        console.log("✅ history 已儲存到 localStorage (sendBtn - success):", localStorage.getItem(`chat-${currentChatId}`)); // 新增日誌
 
+        // ✅ 清除假訊息的記憶和儲存
+        fakeMessages = [];
+        localStorage.removeItem(`unsent-${currentChatId}`);
+        scrollToBottom(); // ✅ AI 回覆後再捲到底
 
     } catch (err) {
         typing.remove();
         console.error("❌ Gemini 回覆失敗", err);
         alert("⚠️ Gemini 回覆失敗，請檢查 API Key 或模型！");
+
+        // ✅ 新增：在失敗時也清空 fakeMessages 和 unsent localStorage
+        // 這樣即使 API 呼叫失敗，也不會累積未發送的訊息
+        fakeMessages = [];
+        localStorage.removeItem(`unsent-${currentChatId}`);
+        console.log("❌ Gemini 回覆失敗，已清空 fakeMessages 和 unsent localStorage"); // 新增日誌
+
     }
 });
 
 // 畫泡泡
-// ✅ appendMessage：根據訊息格式自動渲染正確內容
+// ================== appendMessage ===============================
+// 根據訊息格式自動渲染正確內容
 function appendMessage(msg) {
     const messages = document.getElementById("messages");
 
@@ -410,8 +501,8 @@ function appendMessage(msg) {
     div.dataset.id = msg.id || (Date.now() + Math.random());
     div.className = msg.sender === "me" ? "message me" : "message other";
 
-    const currentId = window.currentChatId;
-    const chat = chats.find(c => c.id === currentId);
+    const currentChatId = window.currentChatId;
+    const chat = chats.find(c => c.id === currentChatId);
     const aiAvatar = chat?.aiAvatar || "default-avatar.png";
 
     const text = msg.text?.trim() || ""; // 獲取原始文本內容
@@ -427,6 +518,17 @@ function appendMessage(msg) {
     let i = 0;
     while (i < lines.length) {
         const line = lines[i].trim();
+
+        // 嘗試匹配貼圖訊息
+        const stickerMatch = msg.text.match(/^<貼圖:\s*(.+?)\s*\|\s*(https?:\/\/\S+)>$/);
+        if (stickerMatch) {
+            const url = stickerMatch[2].trim();
+            bubbleContentHtml += `
+        <img src="${url}" alt="sticker" style="max-width: 150px; border-radius: 10px;" />
+    `;
+            i++; // 處理完這一行
+            continue;
+        }
 
         // 嘗試匹配語音訊息
         const voiceMatch = line.match(/^\[語音：(.*)\]$/);
@@ -589,10 +691,12 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("🚀 DOM 完成載入");
 
     // ========== 功能區塊 ==========
+    checkBrokenChatHistories();
     // 畫聊天室列表
     renderChatList();
     // 初始化時呼叫
     applyUserSettings();
+    //loadStickers(); // ✅ 放這裡沒問題
 
     // API Key
     document.getElementById("apiKey").value = localStorage.getItem("apiKey") || "";
@@ -610,13 +714,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ========== 角色設定 (有聊天室才跑) ==========
-    const currentId = window.currentChatId;
-    if (currentId) {
-        document.getElementById("chatNameInput").value = localStorage.getItem(`${currentId}_chatName`) || "";
-        document.getElementById("aiPersonaInput").value = localStorage.getItem(`${currentId}_aiPersona`) || "";
-        document.getElementById("myPersonaInput").value = localStorage.getItem(`${currentId}_myPersona`) || "";
+    //const currentId = window.currentChatId;
+    if (currentChatId) {
+        document.getElementById("chatNameInput").value = localStorage.getItem(`${currentChatId}_chatName`) || "";
+        document.getElementById("aiPersonaInput").value = localStorage.getItem(`${currentChatId}_aiPersona`) || "";
+        document.getElementById("myPersonaInput").value = localStorage.getItem(`${currentChatId}_myPersona`) || "";
 
-        const aiAvatarUrl = localStorage.getItem(`${currentId}_aiAvatarUrl`);
+        const aiAvatarUrl = localStorage.getItem(`${currentChatId}_aiAvatarUrl`);
         if (aiAvatarUrl) {
             document.querySelector(".ai-avatar-preview").innerHTML = `<img src="${aiAvatarUrl}" style="width:80px;border-radius:50%">`;
         }
@@ -645,21 +749,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmAddStickerBtn = document.getElementById("confirmAddSticker");
     const stickerGrid = document.getElementById("stickerGrid");
 
-    // 預設貼圖
-    const defaultStickers = [
-        { name: "誰在喵本大王", url: "/path/to/sticker1.png" },
-        { name: "尊嘟假嘟", url: "/path/to/sticker2.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" },
-        { name: "我操了", url: "/path/to/sticker3.png" }
-        // ...更多預設貼圖
-    ];
-
     // 從 localStorage 或預設載入貼圖
     function loadStickers() {
         const saved = JSON.parse(localStorage.getItem("customStickers") || "[]");
@@ -670,6 +759,42 @@ document.addEventListener("DOMContentLoaded", () => {
             img.src = s.url;
             img.alt = s.name;
             img.title = s.name;
+            img.classList.add("sticker-img");
+
+            img.addEventListener("click", () => {
+                const id = Date.now() + Math.random();
+                const time = formatTime();
+                const timeDisplay = null;
+                // ✅ 假傳送格式：<貼圖: 描述\n連結>
+                const fakeStickerMsg = {
+                    id,
+                    text: `<貼圖: ${s.name}|${s.url}>`,
+                    time,
+                    sender: "me",
+                    isVoice: false,
+                    voiceContent: null,
+                    timeDisplay,
+                    timestamp: Date.now()
+                };
+
+                // ✅ 加入畫面
+                appendMessage(fakeStickerMsg);
+
+                // ✅ 假訊息陣列（這樣 AI 才讀得到）
+                fakeMessages.push(fakeStickerMsg);
+
+                // ✅ 加入 localStorage 歷史紀錄
+                let stickerHistory = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+                stickerHistory.push(fakeStickerMsg);
+                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(stickerHistory));
+                // 儲存假訊息
+                localStorage.setItem(`unsent-${currentChatId}`, JSON.stringify(fakeMessages));
+
+
+                // ✅ 關閉貼圖面板（可選）
+                stickerPanel.style.display = "none";
+            });
+
             stickerGrid.appendChild(img);
         }
     }
@@ -926,17 +1051,29 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             if (deleteTargets.length > 0 && confirm(`確定刪除 ${deleteTargets.length} 筆訊息嗎？`)) {
                 let history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
-                history = history.filter(m => m); // 避免 undefined
+                let fake = JSON.parse(localStorage.getItem(`unsent-${currentChatId}`) || "[]");
 
-                deleteTargets.forEach(id => {
-                    const idx = history.findIndex(m => m && m.id?.toString() === id.toString());
-                    if (idx !== -1) {
-                        history.splice(idx, 1);
-                        document.querySelector(`.message[data-id="${id}"]`)?.remove(); // 直接從畫面移除
-                    }
-                });
+                // 過濾掉被選中的 ID
+                history = history.filter(m => !deleteTargets.includes(m.id?.toString()));
+                fake = fake.filter(m => !deleteTargets.includes(m.id?.toString()));
+
+
+                // 更新 localStorage
                 localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
-                alert("已刪除！");
+                localStorage.setItem(`unsent-${currentChatId}`, JSON.stringify(fake));
+
+                // 更新記憶中的 fakeMessages
+                fakeMessages = fake;
+
+                // 移除畫面 DOM
+                deleteTargets.forEach(id => {
+                    const el = document.querySelector(`.message[data-id="${id}"]`);
+                    if (el) el.remove();
+                });
+
+                alert("✅ 已刪除！");
+                deleteTargets = []; // 清空選取清單
+                isDeleteMode = false;
             }
             isDeleteMode = false;
             deleteBtn.innerHTML = `
@@ -998,12 +1135,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ========== 其他監聽 ==========
     document.getElementById("chatSettingsBtn").addEventListener("click", () => {
-        const currentId = window.currentChatId;
-        if (!currentId) {
+        //const currentId = window.currentChatId;
+        if (!currentChatId) {
             alert("未選擇聊天室！");
             return;
         }
-        const chat = chats.find(c => c.id === currentId);
+        const chat = chats.find(c => c.id === currentChatId);
         if (chat) {
             document.getElementById("chatNameInput").value = chat.name || "";
             document.getElementById("aiPersonaInput").value = chat.aiPersona || "";
@@ -1021,9 +1158,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 監聽儲存
     document.getElementById("saveSettingsBtn2").addEventListener("click", () => {
-        const currentId = window.currentChatId;
+        //const currentId = window.currentChatId;
 
-        if (!currentId) {
+        if (!currentChatId) {
             alert("未找到聊天室 ID，請檢查 openChat 是否有設定 currentChatId");
             return;
         }
@@ -1035,14 +1172,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const myPersona = document.getElementById("myPersonaInput").value.trim();
         const myAvatar = document.getElementById("myAvatarUrlInput").value.trim();
 
-        const idx = chats.findIndex(c => c.id === currentId);
+        const idx = chats.findIndex(c => c.id === currentChatId);
 
         const contextLength = parseInt(document.getElementById("contextLengthInput").value) || 3;
         chats[idx].contextLength = contextLength;
 
 
         // 同步更新該聊天室項目的頭像
-        document.querySelector(`.chat-avatar[data-chatid="${currentId}"]`).src = aiAvatar;
+        document.querySelector(`.chat-avatar[data-chatid="${currentChatId}"]`).src = aiAvatar;
         // 更新設定面板裡的預覽
         const targetImg = document.querySelector(".ai-avatar-preview img");
         if (targetImg && aiAvatar) {
@@ -1683,19 +1820,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 角色發動態
     document.getElementById("characterPostBtn").addEventListener("click", async () => {
-        const currentId = window.currentChatId;
-        if (!currentId) {
+        //const currentId = window.currentChatId;
+        if (!currentChatId) {
             alert("請先選擇一個聊天室");
             return;
         }
 
         const chats = JSON.parse(localStorage.getItem("chats") || "[]");
-        const currentChat = chats.find(c => c.id === currentId);
+        const currentChat = chats.find(c => c.id === currentChatId);
         const roleName = currentChat?.name || "角色";
         const persona = currentChat?.aiPersona || "";
 
         // 取得最近聊天
-        const history = JSON.parse(localStorage.getItem(`chat-${currentId}`) || "[]");
+        const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
         const last10 = history
             .slice(-10)
             .map(m => `${m.sender === "me" ? "使用者" : roleName}：${m.text}`)
@@ -1763,13 +1900,13 @@ ${last10}
         document.getElementById("dailyModal").style.display = "none";
     });
     async function generateCharacterPost(type) {
-        const currentId = window.currentChatId;
-        if (!currentId) {
+        //const currentId = window.currentChatId;
+        if (!currentChatId) {
             alert("請先選擇一個聊天室，因為要抓角色設定。");
             return;
         }
         const chats = JSON.parse(localStorage.getItem("chats") || "[]");
-        const currentChat = chats.find(c => c.id === currentId);
+        const currentChat = chats.find(c => c.id === currentChatId);
         if (!currentChat) {
             alert("找不到角色資訊");
             return;
@@ -1841,13 +1978,13 @@ ${roleName}
 
 // 監聽愛心按鈕打開設定
 document.getElementById("chatSettingsBtn").addEventListener("click", () => {
-    const currentId = window.currentChatId;
-    if (!currentId) {
+    //const currentId = window.currentChatId;
+    if (!currentChatId) {
         alert("未找到聊天室 ID，請先選一個聊天室！");
         return;
     }
 
-    const chat = chats.find(c => c.id === currentId);
+    const chat = chats.find(c => c.id === currentChatId);
     if (!chat) {
         alert("找不到此聊天室的資料！");
         return;
@@ -1949,9 +2086,9 @@ function addPost(text) {
 }
 
 async function autoCommentFromAI(postText) {
-    const currentId = window.currentChatId;
+    //const currentId = window.currentChatId;
     const chats = JSON.parse(localStorage.getItem("chats") || "[]");
-    const currentChat = chats.find(c => c.id === currentId);
+    const currentChat = chats.find(c => c.id === currentChatId);
 
     const roleName = currentChat?.name || "角色";
     const persona = currentChat?.aiPersona || "";
@@ -2064,6 +2201,26 @@ function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }, 50);
 }
+
+function checkBrokenChatHistories() {
+    for (let key in localStorage) {
+        if (key.startsWith("chat-")) {
+            try {
+                const val = JSON.parse(localStorage.getItem(key));
+                if (!Array.isArray(val)) {
+                    console.warn("⚠️ 壞掉的聊天室訊息資料：", key, val);
+                    localStorage.removeItem(key);
+                    console.log("✅ 已刪除錯誤紀錄，恢復乾淨狀態");
+                }
+            } catch (e) {
+                console.error("❌ 無法解析的聊天室紀錄：", key, e);
+                localStorage.removeItem(key);
+                console.log("✅ 已清空損壞紀錄");
+            }
+        }
+    }
+}
+
 
 
 
