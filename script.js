@@ -226,8 +226,12 @@ function openChat(id, name) {
     const unsentKey = `unsent-${currentChatId}`;
     const savedUnsent = localStorage.getItem(unsentKey);
     fakeMessages = savedUnsent ? JSON.parse(savedUnsent) : [];
-    fakeMessages.forEach(msg => appendMessage(msg));
 
+    fakeMessages.forEach(msg => {
+        if (!document.querySelector(`.message[data-id="${msg.id}"]`)) {
+            appendMessage(msg);
+        }
+    });
 
     // ✅ 全部加完再 scroll 到底
     setTimeout(() => {
@@ -270,7 +274,7 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
 
     // ✅ 新增這行：在每次假傳送前，先清空 fakeMessages
     // 這確保了 fakeMessages 永遠只包含當前要發送的這一則或幾則訊息
-    fakeMessages = [];
+    //fakeMessages = [];
 
     const time = formatTime();
     const currentChatId = window.currentChatId;
