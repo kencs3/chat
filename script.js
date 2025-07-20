@@ -13,8 +13,8 @@ const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
 // 預設貼圖
 const defaultStickers = [
-    { name: "小狗好奇的目光", url: "https://files.catbox.moe/mnfk0l.jpg" },
-    { name: "小狗委屈的憋著眼淚", url: "https://files.catbox.moe/t9o84s.jpg" },
+    { name: "小狗無辜的眼神", url: "https://files.catbox.moe/mnfk0l.jpg" },
+    { name: "小狗委屈", url: "https://files.catbox.moe/t9o84s.jpg" },
     { name: "小狗哭出來了", url: "https://files.catbox.moe/hpx10j.jpg" },
     { name: "小狗很愛你", url: "https://files.catbox.moe/4q2izm.jpg" },
     { name: "小狗驕傲", url: "https://files.catbox.moe/ksjp5l.jpg" },
@@ -344,13 +344,17 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     });
     console.log("📜 history (sendBtn - after user messages push):", JSON.stringify(history)); // 新增日誌
 
+    // 🔁 取得上下文記憶
+    const contextLength = parseInt(document.getElementById("contextLengthInput").value) || 3;
+    const contextMessages = history.slice(-contextLength);
+
+    let chatHistoryText = contextMessages.map(m => {
+        const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
+        return `${who}：${m.text}`;
+    }).join("\n");
+
 
     // 🔁 組出對話紀錄
-    let chatHistoryText = "";
-    fakeMessages.forEach(m => {
-        const who = chat.myName || "你";
-        chatHistoryText += `${who}：${m.text}\n`;
-    });
     let text = fakeMessages.map(m => m.text).join("\n");
 
     // 🤖 插入 AI 正在輸入中
@@ -376,7 +380,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     const systemPrompt = `
 你是 ${chat.name}。
 請根據人設「${chat.aiPersona}」扮演他，僅用角色語氣第一人稱回話，不要有旁白、不要使用括號。
-以下是你們剛剛的對話紀錄（僅供參考）：
+以下是你們之前的對話紀錄（僅供參考）：
 ${chatHistoryText}
 
 你可以使用語音或圖片輔助說話，當你覺得非常可愛、有趣，或氣氛需要時才用。
