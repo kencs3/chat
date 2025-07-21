@@ -642,26 +642,73 @@ footer.footer-nav button:hover {
 }
 
 .form-group.toggle-switch-group label {
-    font-size: 15px;
+    font-size: 16px;
     color: #555;
     font-weight: bold;
     /* 稍微粗體像 h4 */
-    padding: 8px;
     gap: 8px;
-    padding-left: 15px;
-    padding-right: 15px;
 }
 
 /* 分隔線 */
 .divider-line {
-    width: 95%;
+    width: 98%;
     height: 1px;
     background-color: #ccc;
     margin: 5px auto;
     /* 可調整上下間距 */
 }
 
+.aiAutoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* 讓 label 靠左、input 靠右 */
+    margin-bottom: 6px;
+}
 
+.aiAutoRow label {
+    font-size: 15px;
+    color: #555;
+    font-weight: bold;
+    /* 稍微粗體像 h4 */
+    gap: 10px;
+}
+
+.aiAutoRow input[type="number"] {
+    width: 80px;
+    height: 20px;
+    padding: 10px 8px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    box-sizing: border-box;
+    appearance: textfield;
+    /* 移除部分手機樣式 */
+}
+
+.autoSend-description {
+    margin-top: 5px;
+    padding-left: 4px;
+    border-left: 2px solid #ccc;
+    /* 左側加一條細線作為說明區塊 */
+}
+
+.autoSend-description small {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+
+/* 移除 Chrome/Safari 上的箭頭按鈕 */
+.aiAuto input[type=number]::-webkit-inner-spin-button,
+.aiAuto input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
 /*聊天室設定按鈕*/
 .chat-settings-panel {
@@ -804,8 +851,6 @@ footer.footer-nav button:hover {
     color: #555;
     flex-direction: column;
     gap: 8px;
-    padding-left: 15px;
-    padding-right: 15px;
 }
 
 .backup-section button {
@@ -827,7 +872,6 @@ footer.footer-nav button:hover {
     display: flex;
     gap: 8px;
     /* 你說的 gpa 8px 應是 gap 打錯？這樣兩個項目間有間距 */
-    padding: 8px;
     font-size: 15px;
     color: #555;
     font-weight: bold;
@@ -835,8 +879,6 @@ footer.footer-nav button:hover {
     background-color: none;
     /* 淺背景，看起來有區塊感 */
     border: none;
-    padding-left: 15px;
-    padding-right: 15px;
     flex-direction: column;
 }
 
