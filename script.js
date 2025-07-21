@@ -348,8 +348,8 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     } catch (e) {
         history = [];
     }
-    console.log("📜 載入的 history (sendBtn - after parse):", JSON.stringify(history)); // 新增日誌
-    console.log("🧪 目前 fakeMessages (sendBtn - before history push):", JSON.stringify(fakeMessages)); // 新增日誌
+    // console.log("📜 載入的 history (sendBtn - after parse):", JSON.stringify(history)); // 新增日誌
+    // console.log("🧪 目前 fakeMessages (sendBtn - before history push):", JSON.stringify(fakeMessages)); // 新增日誌
 
 
     // ✅ 新增這一段：將使用者剛發送的訊息 (fakeMessages) 加入到 history 陣列中
@@ -359,7 +359,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
 
         history.push(m);
     });
-    console.log("📜 history (sendBtn - after user messages push):", JSON.stringify(history)); // 新增日誌
+    // console.log("📜 history (sendBtn - after user messages push):", JSON.stringify(history)); // 新增日誌
 
     // 🔁 取得上下文記憶
     const contextLength = parseInt(document.getElementById("contextLengthInput").value) || 3;
@@ -396,7 +396,10 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     // 🧠 建立 prompt
     const systemPrompt = `
 你是 ${chat.name}。請根據「${chat.aiPersona}」的人設，用角色語氣、第一人稱回話。  
+
+## 必要規則：
 請用繁體中文，不要旁白，不要括號，不要使用 JSON 格式。
+**每則訊息後都使用 [split] 分段。**
 模擬真人的聊天習慣，你可以一次性生成多條訊息。
 
 文字、語音、圖片、貼圖都要**單獨成為一則訊息**，不要與其他句子混在一起。
@@ -411,11 +414,12 @@ ${chatHistoryText}
 - 23:00～2:00：夜貓子  
 - 2:00 後：深夜，可自然展現關心
 
+以下為可以使用的特殊格式，必須獨立一行，否則不會顯示
 - 語音格式
   [語音：內容]
 
 - 圖片格式
-  [圖片：圖片描述]
+  [圖片：關於圖片的描述]
   例如：
   [圖片：微笑的小狗]
 
@@ -464,10 +468,21 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         typing.remove();
 
         const geminiReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        console.log("🎯 Gemini 原始回傳：", geminiReply);
+
         if (!geminiReply) throw new Error("Gemini 無內容");
 
+        // 🧠 防呆自動拆段邏輯：若沒用 [split]，則用句點或換行拆段
+        const replies = (
+            geminiReply.includes("[split]")
+                ? geminiReply.split("[split]")
+                : geminiReply.split(/\n+|(?<=。)/g)
+        ).map(r => r.trim())
+            .filter(r => r.length > 0 && r.toLowerCase() !== "[split]"); // 防止 AI 回傳 [split] 本體
+
+
         // 📤 處理 AI 回覆（切段 + 避免重複圖片網址）
-        const replies = geminiReply.split("[split]").map(r => r.trim()).filter(Boolean);
+
         for (const reply of replies) {
             const replyTime = formatTime();
             const replyId = Date.now() + Math.random();
@@ -484,7 +499,7 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
                 timestamp: Date.now()
             };
             appendMessage(aiMsg);
-            console.log("➡️ 將 AI 訊息推入 history:", aiMsg.id, aiMsg.text); // 新增日誌
+            // console.log("➡️ 將 AI 訊息推入 history:", aiMsg.id, aiMsg.text); // 新增日誌
 
             history.push(aiMsg);
         }
@@ -502,7 +517,7 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         history = uniqueHistory; // 用去重複後的陣列替換原有的 history
 
         localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
-        console.log("✅ history 已儲存到 localStorage (sendBtn - success):", localStorage.getItem(`chat-${currentChatId}`)); // 新增日誌
+        // console.log("✅ history 已儲存到 localStorage (sendBtn - success):", localStorage.getItem(`chat-${currentChatId}`)); // 新增日誌
 
         // ✅ 清除假訊息的記憶和儲存
         fakeMessages = [];
@@ -555,7 +570,7 @@ function appendMessage(msg) {
         const line = lines[i].trim();
 
         // 嘗試匹配貼圖訊息
-        const stickerMatch = msg.text.match(/^<貼圖:\s*(.+?)\s*\|\s*(https?:\/\/\S+)>$/);
+        const stickerMatch = line.match(/^<貼圖:\s*(.+?)\s*\|\s*(https?:\/\/\S+)>$/);
         if (stickerMatch) {
             const url = stickerMatch[2].trim();
             div.dataset.raw = msg.text; // ✅ 加這一行！
