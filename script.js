@@ -331,7 +331,7 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
             hour: "2-digit",
             minute: "2-digit"
         });
-        timeText = `現在的時間是：${nowFormatted}。請根據這個時間調整你的語氣與說話內容。`;
+        timeText = `現在的時間是：${nowFormatted}。請根據這個時間調整你的語氣與說話內容。你知道現在幾點，但不要輕易判斷這個時間對使用者來說是否晚了。每個人作息不同，請依照氣氛自然互動即可，除非使用者表達出疲憊或睡意，再考慮提醒他休息。`;
     }
 
 
@@ -400,6 +400,10 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
 ${timeText}
 以下是你們之前的對話紀錄（僅供參考）：
 ${chatHistoryText}
+一般來說：
+- 晚上 11 點前都屬於正常活躍時間。
+- 晚上 11 點到凌晨 2 點為夜貓子活動時間。
+- 凌晨 2 點後才算真正深夜。
 
 你可以使用語音或圖片輔助說話，當你覺得非常可愛、有趣，或氣氛需要時才用。
 - 如需要使用語音請用格式，**必須單獨一行，前後不能加上其他文字或句子，語音前後也不可以出現說話內容**。
