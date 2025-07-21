@@ -1991,7 +1991,7 @@ ${roleName}
         if (type === "short") {
             promptText += "短貼文，簡單分享生活動態，自然表達生活或心情，不要假設使用者在旁邊，不要旁白，不要劇情描述，直接講內容，使用繁體中文。";
         } else {
-            promptText += "像是在私人日記書寫，請多寫幾句，描述今日的心情與小細節，不要假設使用者在旁邊，不要旁白，直接用日記風格，使用繁體中文。。";
+            promptText += "以第一人稱寫一篇私人日記，描述今日心情與生活，用繁體中文。";
         }
 
         try {
@@ -2025,18 +2025,6 @@ ${roleName}
             console.error(err);
             alert("角色貼文失敗，請檢查 API 設定。");
         }
-        post.comments.forEach(c => {
-            const cmt = document.createElement("div");
-            cmt.className = "comment-block";
-            cmt.dataset.commentId = c.id;
-            cmt.dataset.postTime = post.time;
-            cmt.style.marginTop = "5px";
-            cmt.style.fontSize = "14px";
-            const displayName = c.user || c.nickname || "匿名";
-            cmt.textContent = `${displayName}：${c.text}`;
-            div.appendChild(cmt);
-        });
-
     }
 
 
@@ -2294,5 +2282,3 @@ document.getElementById("timeAware-toggle").addEventListener("change", (e) => {
     localStorage.setItem("timeAware", isChecked.toString());
     console.log("🕒 時間感知設定變更為：", isChecked);
 });
-
-
