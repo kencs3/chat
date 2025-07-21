@@ -348,20 +348,34 @@
 
                 <!-- 儲存 -->
                 <button id="saveSettingsBtn">💾 儲存設定</button>
-            </div>
-            <div class="backup-section">
-                <h4>聊天備份/還原/刪除</h4>
-                <button id="exportChatsBtn">⬇️ 匯出聊天資料</button>
-                <input type="file" id="importChatsFile" accept=".json" style="display:none">
-                <button id="importChatsBtn">⬆️ 匯入聊天資料</button>
-                <button id="deleteHistory">🗑️ 刪除所有紀錄</button>
-            </div>
-            <br>
-            <div class="storage-info">
-                <label>儲存空間使用量：</label>
-                <div id="storageDisplay">載入中...</div>
-            </div>
 
+                <div class="backup-section">
+                    <h4>聊天備份/還原/刪除</h4>
+                    <button id="exportChatsBtn">⬇️ 匯出聊天資料</button>
+                    <input type="file" id="importChatsFile" accept=".json" style="display:none">
+                    <button id="importChatsBtn">⬆️ 匯入聊天資料</button>
+                    <button id="deleteHistory">🗑️ 刪除所有紀錄</button>
+                </div>
+                <br>
+                <div class="storage-info">
+                    <label>儲存空間使用量：</label>
+                    <div id="storageDisplay">載入中...</div>
+                </div>
+                <!--
+            <label>
+                <input type="checkbox" id="timeAwareToggle"> 啟用時間感知
+            </label>
+            -->
+                <div class="divider-line"></div>
+
+                <div class="form-group toggle-switch-group">
+                    <label for="timeAware-toggle">開啟時間感知</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="timeAware-toggle">
+                        <label for="timeAware-toggle" class="slider"></label>
+                    </div>
+                </div>
+            </div>
         </div>
 
 

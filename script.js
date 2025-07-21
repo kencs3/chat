@@ -317,6 +317,23 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
 // 傳送
 document.getElementById("sendBtn").addEventListener("click", async () => {
     console.log("✅ sendBtn 被點了！");
+    // 🕒 根據時間感知開關，決定是否要加入時間描述
+    const isTimeAware = localStorage.getItem("timeAware") === "true";
+    let timeText = "";
+
+    if (isTimeAware) {
+        const now = new Date();
+        const nowFormatted = now.toLocaleString("zh-TW", {
+            hour12: false,
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+        timeText = `現在的時間是：${nowFormatted}。請根據這個時間調整你的語氣與說話內容。`;
+    }
+
 
     if (fakeMessages.length === 0) return;
 
@@ -380,12 +397,13 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     const systemPrompt = `
 你是 ${chat.name}。
 請根據人設「${chat.aiPersona}」扮演他，僅用角色語氣第一人稱回話，不要有旁白、不要使用括號。
+${timeText}
 以下是你們之前的對話紀錄（僅供參考）：
 ${chatHistoryText}
 
 你可以使用語音或圖片輔助說話，當你覺得非常可愛、有趣，或氣氛需要時才用。
-- 如需要使用語音請用格式：
-  [語音：內容]（**必須單獨一行，前後不能加上其他文字或句子，語音前後也不可以出現說話內容**。）
+- 如需要使用語音請用格式，**必須單獨一行，前後不能加上其他文字或句子，語音前後也不可以出現說話內容**。
+  [語音：內容]
 
 - 如需要使用圖片，請使用格式：
   第一行：（可以是你要說的話，也可以省略）
@@ -723,6 +741,28 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modelSection").style.display = "block";
         select.value = savedModel;
     }
+
+    // 時間感知載入狀態
+    window.addEventListener("DOMContentLoaded", () => {
+        // 你的程式碼放這裡
+        const timeAwareToggle = document.getElementById("timeAware-toggle");
+        if (!timeAwareToggle) {
+            console.warn("找不到 #timeAware-toggle 元素！");
+            return;
+        }
+
+        // ✅ 綁定事件
+        timeAwareToggle.addEventListener("change", (e) => {
+            const isChecked = e.target.checked;
+            console.log("🕒 時間感知切換為：", isChecked);
+            localStorage.setItem("timeAware", isChecked.toString());
+        });
+
+        // ✅ 頁面載入時同步狀態
+        const saved = localStorage.getItem("timeAware");
+        timeAwareToggle.checked = saved === "true";
+    });
+
 
     // ========== 角色設定 (有聊天室才跑) ==========
     //const currentId = window.currentChatId;
@@ -2244,6 +2284,11 @@ function checkBrokenChatHistories() {
     }
 }
 
-
+// 時間感知功能
+document.getElementById("timeAware-toggle").addEventListener("change", (e) => {
+    const isChecked = e.target.checked;
+    localStorage.setItem("timeAware", isChecked.toString());
+    console.log("🕒 時間感知設定變更為：", isChecked);
+});
 
 
