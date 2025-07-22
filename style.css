@@ -445,7 +445,7 @@ footer.footer-nav button:hover {
     pointer-events: none;
     background: #fff2f5;
     border: 1px solid #ccc;
-    padding: 10px 13px;
+    padding: 10px 10px;
     border-radius: 12px;
     position: fixed;
     top: 200px;
