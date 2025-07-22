@@ -417,8 +417,8 @@ ${chatHistoryText}
 - 語音格式
   [語音：內容]
 
-- 圖片格式
-  [圖片：關於圖片的描述]
+- 照片格式
+  [圖片：關於照片的描述]
   例如：
   [圖片：微笑的小狗]
 
@@ -429,8 +429,8 @@ ${chatHistoryText}
 請只從以下貼圖清單中選擇使用，**禁止創造新的貼圖**，也**不要改動描述或網址**：
 ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join('\n')}
 
-- 圖片和貼圖的差異
-圖片(image)：指的是【模擬真實相機拍攝的照片】，比如風景、自拍、美食等
+- 照片和貼圖的差異
+照片(image)：指的是【模擬真實相機拍攝的照片】，比如風景、自拍、美食等
 貼圖(sticker)：指的是【卡通或梗圖】，用於表達情緒。
 
 請記得：
@@ -1291,9 +1291,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // ========== 備份 ==========
     // 匯出
     document.getElementById("exportChatsBtn").addEventListener("click", () => {
+        function fixId(id) {
+            return String(id).replace(/\./g, "_");
+        }
+
+        const rawChats = JSON.parse(localStorage.getItem("chats") || "[]");
+
+        const chats = rawChats.map(chat => ({
+            ...chat,
+            id: fixId(chat.id)
+        }));
+
+        const messages = {};
+        chats.forEach(chat => {
+            const raw = JSON.parse(localStorage.getItem(`chat-${chat.id}`) || "[]");
+            messages[chat.id] = raw.map(msg => {
+                return {
+                    ...msg,
+                    id: fixId(msg.id),
+                    timestamp: msg.timestamp || Date.now(),
+                    isVoice: msg.isVoice !== undefined ? msg.isVoice : /^\[語音：(.*)\]$/.test(msg.text),
+                    voiceContent: msg.voiceContent || (msg.text?.match(/^\[語音：(.*)\]$/)?.[1] || null),
+                    timeDisplay: msg.timeDisplay || (msg.text?.match(/^\[語音：(.*)\]$/)
+                        ? `00:${Math.max(1, Math.ceil(msg.text.match(/^\[語音：(.*)\]$/)[1].length / 2)).toString().padStart(2, "0")}`
+                        : null)
+                };
+            });
+        });
+
         const data = {
-            chats: JSON.parse(localStorage.getItem("chats") || "[]"),
-            messages: {},
+            chats,
+            messages,
             posts: JSON.parse(localStorage.getItem("posts") || "[]"),
             settings: {
                 userNickname: localStorage.getItem("userNickname") || "user",
@@ -1302,39 +1330,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        // 針對每個聊天室處理訊息
-        data.chats.forEach(chat => {
-            const messages = JSON.parse(localStorage.getItem(`chat-${chat.id}`) || "[]");
-
-            // 補齊每則訊息的 timestamp、語音欄位
-            const updatedMessages = messages.map(msg => {
-                // ✅ timestamp
-                if (!msg.timestamp) {
-                    msg.timestamp = typeof msg.id === "number" ? msg.id : Date.now();
-                }
-
-                // ✅ 語音欄位補齊
-                if (msg.isVoice === undefined) {
-                    const match = msg.text?.match(/^\[語音：(.*)\]$/);
-                    if (match) {
-                        msg.isVoice = true;
-                        msg.voiceContent = match[1];
-                        const len = match[1].length;
-                        msg.timeDisplay = `00:${Math.max(1, Math.ceil(len / 2)).toString().padStart(2, '0')}`;
-                    } else {
-                        msg.isVoice = false;
-                        msg.voiceContent = null;
-                        msg.timeDisplay = null;
-                    }
-                }
-
-                return msg;
-            });
-
-            data.messages[chat.id] = updatedMessages;
-        });
-
-        // 建立 JSON Blob 並下載
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
@@ -1343,8 +1338,9 @@ document.addEventListener("DOMContentLoaded", () => {
         a.download = "myChats.backup.json";
         a.click();
 
-        alert("已經成功匯出！");
+        alert("✅ 已成功匯出，所有 ID 都已轉為安全格式！");
     });
+
 
 
     // 點擊匯入按鈕
@@ -1352,38 +1348,39 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("importChatsFile").click();
     });
 
-    // 真的選檔案後
     document.getElementById("importChatsFile").addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        const fixId = id => String(id).replace(/\./g, "_");
+
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const data = JSON.parse(event.target.result);
-                if (!data.chats || !data.messages) {
-                    alert("檔案格式錯誤，無法匯入");
+                const raw = JSON.parse(event.target.result);
+                if (!raw.chats || !raw.messages) {
+                    alert("❌ 檔案格式錯誤，無法匯入！");
                     return;
                 }
 
-                // 🔧 語音欄位補齊處理
-                Object.keys(data.messages).forEach(chatId => {
-                    data.messages[chatId] = data.messages[chatId].map(msg => {
-                        // 統一 ID 為字串
-                        msg.id = String(msg.id);
+                const chats = raw.chats.map(chat => {
+                    chat.id = fixId(chat.id);
+                    return chat;
+                });
 
-                        if (!msg.timestamp) {
-                            msg.timestamp = typeof msg.id === 'number' ? msg.id : Date.now();
-                        }
+                const messages = {};
+                Object.keys(raw.messages).forEach(oldId => {
+                    const newId = fixId(oldId);
+                    messages[newId] = raw.messages[oldId].map(msg => {
+                        msg.id = fixId(msg.id);
+                        if (!msg.timestamp) msg.timestamp = Date.now();
 
-                        // 補語音欄位（只補 undefined 的，不會動到正常資料）
                         if (msg.isVoice === undefined) {
                             const match = msg.text?.match(/^\[語音：(.*)\]$/);
                             if (match) {
                                 msg.isVoice = true;
                                 msg.voiceContent = match[1];
-                                const len = match[1].length;
-                                msg.timeDisplay = `00:${Math.max(1, Math.ceil(len / 2)).toString().padStart(2, '0')}`;
+                                msg.timeDisplay = `00:${Math.max(1, Math.ceil(match[1].length / 2)).toString().padStart(2, "0")}`;
                             } else {
                                 msg.isVoice = false;
                                 msg.voiceContent = null;
@@ -1395,31 +1392,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 });
 
-                // ✅ 儲存回 localStorage
-                localStorage.setItem("chats", JSON.stringify(data.chats));
-                Object.keys(data.messages).forEach(id => {
-                    localStorage.setItem(`chat-${id}`, JSON.stringify(data.messages[id]));
+                // 寫入 localStorage
+                localStorage.setItem("chats", JSON.stringify(chats));
+                Object.keys(messages).forEach(id => {
+                    localStorage.setItem(`chat-${id}`, JSON.stringify(messages[id]));
                 });
 
-                if (data.posts) {
-                    localStorage.setItem("posts", JSON.stringify(data.posts));
+                if (raw.posts) {
+                    localStorage.setItem("posts", JSON.stringify(raw.posts));
                 }
 
-                if (data.settings) {
-                    localStorage.setItem("userNickname", data.settings.userNickname || "user");
-                    localStorage.setItem("userAvatar", data.settings.userAvatar || "https://placekitten.com/80/80");
-                    localStorage.setItem("postBg", data.settings.postBg || "https://placekitten.com/600/200");
+                if (raw.settings) {
+                    localStorage.setItem("userNickname", raw.settings.userNickname || "user");
+                    localStorage.setItem("userAvatar", raw.settings.userAvatar || "https://placekitten.com/80/80");
+                    localStorage.setItem("postBg", raw.settings.postBg || "https://placekitten.com/600/200");
                 }
 
-                alert("匯入成功，請重新整理頁面！");
+                alert("✅ 匯入成功，所有 ID 都已自動轉為安全格式，請重新整理頁面！");
             } catch (err) {
-                alert("匯入失敗，請確認檔案格式");
+                alert("❌ 匯入失敗，請檢查檔案格式");
                 console.error(err);
             }
         };
 
         reader.readAsText(file);
     });
+
 
     // ================= 刪除所有紀錄 ==================
     document.getElementById("deleteHistory").addEventListener("click", () => {
@@ -2151,10 +2149,7 @@ document.getElementById("heartVoiceClose").addEventListener("click", () => {
     hideHeartVoice(); // 同樣會一起關掉 moreMenu
 });
 
-
-
-
-// 監聽愛心按鈕打開設定
+// 打開聊天室設定
 document.getElementById("chatSettingsBtn").addEventListener("click", () => {
     //const currentId = window.currentChatId;
     if (!currentChatId) {
@@ -2405,3 +2400,34 @@ document.getElementById("timeAware-toggle").addEventListener("change", (e) => {
     localStorage.setItem("timeAware", isChecked.toString());
     console.log("🕒 時間感知設定變更為：", isChecked);
 });
+function fixChatIds() {
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+
+    // 修復 chats 陣列本身（角色設定）
+    const newChats = chats.map(chat => {
+        chat.id = String(chat.id).replace(/\./g, "_");
+        return chat;
+    });
+
+    localStorage.setItem("chats", JSON.stringify(newChats));
+
+    // 修復每個聊天室對應的聊天紀錄
+    for (const chat of newChats) {
+        const key = `chat-${chat.id}`;
+        const historyRaw = localStorage.getItem(key);
+        if (!historyRaw) continue;
+
+        try {
+            const history = JSON.parse(historyRaw);
+            const newHistory = history.map(msg => {
+                msg.id = String(msg.id).replace(/\./g, "_");
+                return msg;
+            });
+            localStorage.setItem(key, JSON.stringify(newHistory));
+        } catch (e) {
+            console.error("⚠️ 無法解析聊天紀錄：", key, e);
+        }
+    }
+
+    alert("✅ 所有聊天 ID 已修復為安全格式（點 → 底線）！");
+}
