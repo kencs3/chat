@@ -32,7 +32,6 @@ const defaultStickers = [
     { name: "狗仗人勢", url: "https://files.catbox.moe/8tzks1.jpg" },
     { name: "小狗親貓咪", url: "https://files.catbox.moe/ed1dlq.jpg" },
     { name: "喜歡貓咪", url: "https://files.catbox.moe/m4yfr2.jpg" },
-    { name: "小狗送你花花", url: "https://files.catbox.moe/ejussa.jpg" },
     { name: "滿足地嘆氣", url: "https://files.catbox.moe/ejussa.jpg" },
     { name: "薯條全炫我嘴裡", url: "https://files.catbox.moe/dvikcf.jpg" },
     { name: "小狗裝扮成薯條的樣子", url: "https://files.catbox.moe/9u95x8.jpg" },
@@ -2048,6 +2047,111 @@ ${roleName}
 
 
 });
+
+// 心聲
+document.getElementById("heart").addEventListener("click", async () => {
+    // 關閉 moreMenu
+    // ✅ 延遲讓點擊事件處理完再關閉
+    setTimeout(() => {
+        document.getElementById("moreMenu").classList.remove("show");
+    }, 10);
+
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    const currentChat = chats.find(c => c.id === currentChatId);
+    if (!currentChat) {
+        alert("請先選擇一個聊天室！");
+        return;
+    }
+
+    const roleName = currentChat.name || "角色";
+    const persona = currentChat.aiPersona || "";
+    const myName = currentChat.myName || "使用者";
+    const myPersona = currentChat.myPersona || "";
+
+    // 對話紀錄
+    const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+    const chatHistoryText = history.slice(-10).map(m => {
+        return `${m.sender === "me" ? myName : roleName}：${m.text}`;
+    }).join("\n");
+
+    const systemPrompt = `
+你是 ${roleName}，人設：「${persona}」
+請完全扮演這個角色，用第一人稱語氣思考。
+
+以下是最近你和使用者 ${myName} 的對話紀錄：
+${chatHistoryText}
+
+請你根據當下的情境和對話，生成一句你內心的小小心聲。
+格式要求如下：
+- 必須是第一人稱
+- 不能超過 40 個字
+- 禁止括號、旁白、說明
+- 禁止使用 Markdown 或 JSON
+- 只能輸出一句話
+
+請直接輸出，不要說明。
+`;
+
+    const apiKey = localStorage.getItem("apiKey");
+    const apiModel = localStorage.getItem("apiModel");
+
+    try {
+        const modelPath = apiModel.replace(/^models\//, "");
+        const res = await fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${modelPath}:generateContent?key=${apiKey}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": apiKey
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            { text: systemPrompt }
+                        ]
+                    }
+                ]
+            })
+        });
+
+        const data = await res.json();
+        const heart = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().slice(0, 40);
+        if (!heart) throw new Error("AI 無心聲");
+
+        showHeartVoice(heart);
+    } catch (err) {
+        console.error("心聲錯誤", err);
+        showHeartVoice("（無法取得心聲）");
+    }
+});
+
+let heartTimer = null;
+
+function showHeartVoice(text) {
+    document.getElementById("heartVoiceText").textContent = text;
+    const el = document.getElementById("heartVoice");
+    el.classList.add("show");
+
+    clearTimeout(heartTimer);
+    heartTimer = setTimeout(() => {
+        hideHeartVoice();
+    }, 10000); // 自動 10 秒後消失
+}
+
+function hideHeartVoice() {
+    const el = document.getElementById("heartVoice");
+    el.classList.remove("show");
+
+    // ✅ 一併關閉 moreMenu
+    const moreMenu = document.getElementById("moreMenu");
+    moreMenu.classList.remove("show");
+}
+
+document.getElementById("heartVoiceClose").addEventListener("click", () => {
+    hideHeartVoice(); // 同樣會一起關掉 moreMenu
+});
+
+
 
 
 // 監聽愛心按鈕打開設定

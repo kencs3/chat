@@ -394,7 +394,12 @@ footer.footer-nav button:hover {
 
 .moreMenu {
     display: none;
+    flex-wrap: wrap;
+    /* ✅ 允許換行 */
     position: absolute;
+    width: 200px;
+    height: 50px;
+    /* 如果有8個按鈕高度105px剛剛好 */
     bottom: 120px;
     /* 根據實際畫面調整 */
     left: 10px;
@@ -405,6 +410,7 @@ footer.footer-nav button:hover {
     gap: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 9999;
+    overflow-y: auto;
 }
 
 .moreMenu.show {
@@ -413,12 +419,15 @@ footer.footer-nav button:hover {
 
 
 .moreMenu button {
+    flex: 1 0 22%;
+    /* ✅ 每行4個，留點間距（因為有gap） */
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 5px 0;
     padding: 8px;
-    width: 100%;
+    max-width: 22%;
+    /* max-height: 40%; */
     background: #d1c4c4;
     border: none;
     border-radius: 8px;
@@ -430,6 +439,37 @@ footer.footer-nav button:hover {
 .moreMenu button:hover {
     background: #c0b3b3;
 }
+
+#heartVoice {
+    visibility: hidden;
+    pointer-events: none;
+    background: #fff2f5;
+    border: 1px solid #ccc;
+    padding: 10px 13px;
+    border-radius: 12px;
+    position: fixed;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+    z-index: 10000;
+    max-width: 80%;
+    font-size: 16px;
+    text-align: center;
+}
+
+#heartVoice.show {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    transition-delay: 0s;
+    /* 立即顯示 */
+}
+
+
 
 
 .message {
