@@ -507,48 +507,50 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
 
         // 📤 處理 AI 回覆（切段 + 避免重複圖片網址）
 
-        for (const reply of replies) {
-            const replyTime = formatTime();
-            const replyId = Date.now() + Math.random();
+        let i = 0;
+        function sendOne() {
+            if (i >= replies.length) {
+                typing.remove();
 
-            //const cleanReply = reply.replace(/https?:\/\/\S+\.(jpg|jpeg|png|gif)/gi, ""); // 移除網址
-            const aiMsg = {
-                id: replyId,
+                // 儲存 history 前去重
+                const uniqueHistory = [];
+                const seenIds = new Set();
+                for (let j = history.length - 1; j >= 0; j--) {
+                    const msg = history[j];
+                    if (!seenIds.has(msg.id)) {
+                        uniqueHistory.unshift(msg);
+                        seenIds.add(msg.id);
+                    }
+                }
+                history = uniqueHistory; // 用去重複後的陣列替換原有的 history
+
+                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+                localStorage.setItem(`lastUserMessageTime-${currentChatId}`, Date.now());
+                fakeMessages = [];
+                localStorage.removeItem(`unsent-${currentChatId}`);
+                scrollToBottom();
+                return;
+            }
+
+            const reply = replies[i];
+            const msg = {
+                id: Date.now() + Math.random(),
                 text: reply,
-                time: replyTime,
+                time: formatTime(),
                 sender: "ai",
                 isVoice: false,
                 voiceContent: null,
                 timeDisplay: null,
                 timestamp: Date.now()
             };
-            appendMessage(aiMsg);
-            // console.log("➡️ 將 AI 訊息推入 history:", aiMsg.id, aiMsg.text); // 新增日誌
 
-            history.push(aiMsg);
+            appendMessage(msg);
+            history.push(msg);
+            i++;
+
+            setTimeout(sendOne, 700 + Math.random() * 1000); // 每條 0.7~2 秒
         }
-        // ✅ 新增這一段：在儲存前對 history 進行去重複化
-        const uniqueHistory = [];
-        const seenIds = new Set();
-        // 從後往前遍歷，保留最新的訊息副本
-        for (let i = history.length - 1; i >= 0; i--) {
-            const msg = history[i];
-            if (!seenIds.has(msg.id)) {
-                uniqueHistory.unshift(msg); // 插入到陣列開頭以保持原始順序
-                seenIds.add(msg.id);
-            }
-        }
-        history = uniqueHistory; // 用去重複後的陣列替換原有的 history
-
-        localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
-        // console.log("✅ history 已儲存到 localStorage (sendBtn - success):", localStorage.getItem(`chat-${currentChatId}`)); // 新增日誌
-
-        localStorage.setItem(`lastUserMessageTime-${currentChatId}`, Date.now());
-
-        // ✅ 清除假訊息的記憶和儲存
-        fakeMessages = [];
-        localStorage.removeItem(`unsent-${currentChatId}`);
-        scrollToBottom(); // ✅ AI 回覆後再捲到底
+        setTimeout(sendOne, 700); // 首條延遲 0.7 秒
 
     } catch (err) {
         typing.remove();
@@ -2680,10 +2682,16 @@ function checkAutoMessage(currentChatId) {
     const now = Date.now();
     const elapsed = now - lastTime;
     const hoursPassed = elapsed / (1000 * 60 * 60);
+    console.log("⏳ 經過時間（小時）:", hoursPassed, "設定門檻:", autoSendHours);
+
 
     // 限制夜晚時段不發太多
     const nowHour = new Date().getHours();
-    if (nowHour >= 2 && nowHour <= 7) return; // 凌晨 2~7 點跳過
+    if (nowHour >= 3 && nowHour <= 7) {
+        console.log("🌙 夜間模式開啟，跳過主動訊息");
+        return;
+    }
+
 
     if (hoursPassed >= autoSendHours) {
         console.log("✅ 符合條件，自動發送 AI 訊息");
