@@ -102,7 +102,7 @@ const defaultStickers = [
     { name: "請和我約會", url: "https://files.catbox.moe/z39dm0.jpg" },
     { name: "哭哭", url: "https://files.catbox.moe/8xj2bk.jpg" },
     { name: "親臉頰", url: "https://files.catbox.moe/q2saqo.jpg" },
-    { name: "來啦", url: "https://files.catbox.moe/d8h9fe.jpg" },
+    { name: "我來啦", url: "https://files.catbox.moe/d8h9fe.jpg" },
     { name: "生氣", url: "https://files.catbox.moe/wnqsjj.jpg" },
     { name: "晚安歐", url: "https://files.catbox.moe/e7cnw6.jpeg" },
     { name: "請問一份愛多少錢？", url: "https://files.catbox.moe/h9tfiv.jpeg" },
