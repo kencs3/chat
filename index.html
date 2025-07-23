@@ -380,22 +380,6 @@
                     <label for="apiModel">選擇模型</label>
                     <select id="apiModel"></select>
                 </div>
-
-                <!-- 儲存 -->
-                <button id="saveSettingsBtn">💾 儲存設定</button>
-
-                <div class="backup-section">
-                    <h4>聊天備份/還原/刪除</h4>
-                    <button id="exportChatsBtn">⬇️ 匯出聊天資料</button>
-                    <input type="file" id="importChatsFile" accept=".json" style="display:none">
-                    <button id="importChatsBtn">⬆️ 匯入聊天資料</button>
-                    <button id="deleteHistory">🗑️ 刪除所有紀錄</button>
-                </div>
-                <br>
-                <div class="storage-info">
-                    <label>儲存空間使用量：</label>
-                    <div id="storageDisplay">載入中...</div>
-                </div>
                 <!--
             <label>
                 <input type="checkbox" id="timeAwareToggle"> 啟用時間感知
@@ -419,6 +403,21 @@
                         <small>過了一段時間後沒傳送訊息，AI 會主動傳訊息給你</small>
                         <small>輸入 0 代表關閉功能，預設是 0</small>
                     </div>
+                </div>
+                <!-- 儲存 -->
+                <button id="saveSettingsBtn">💾 儲存設定</button>
+
+                <div class="backup-section">
+                    <h4>聊天備份/還原/刪除</h4>
+                    <button id="exportChatsBtn">⬇️ 匯出聊天資料</button>
+                    <input type="file" id="importChatsFile" accept=".json" style="display:none">
+                    <button id="importChatsBtn">⬆️ 匯入聊天資料</button>
+                    <button id="deleteHistory">🗑️ 刪除所有紀錄</button>
+                </div>
+                <br>
+                <div class="storage-info">
+                    <label>儲存空間使用量：</label>
+                    <div id="storageDisplay">載入中...</div>
                 </div>
             </div>
         </div>

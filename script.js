@@ -11,6 +11,7 @@ window.currentChatId = currentChatId;
 
 const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
+
 // 預設貼圖
 const defaultStickers = [
     { name: "小狗無辜的眼神", url: "https://files.catbox.moe/mnfk0l.jpg" },
@@ -32,9 +33,9 @@ const defaultStickers = [
     { name: "狗仗人勢", url: "https://files.catbox.moe/8tzks1.jpg" },
     { name: "小狗親貓咪", url: "https://files.catbox.moe/ed1dlq.jpg" },
     { name: "喜歡貓咪", url: "https://files.catbox.moe/m4yfr2.jpg" },
-    { name: "滿足地嘆氣", url: "https://files.catbox.moe/ejussa.jpg" },
-    { name: "薯條全炫我嘴裡", url: "https://files.catbox.moe/dvikcf.jpg" },
-    { name: "小狗裝扮成薯條的樣子", url: "https://files.catbox.moe/9u95x8.jpg" },
+    //{ name: "滿足地嘆氣", url: "https://files.catbox.moe/ejussa.jpg" },
+    //{ name: "薯條全炫我嘴裡", url: "https://files.catbox.moe/dvikcf.jpg" },
+    //{ name: "小狗裝扮成薯條的樣子", url: "https://files.catbox.moe/9u95x8.jpg" },
     { name: "小狗吃薯條", url: "https://files.catbox.moe/27wo5f.jpg" },
     { name: "小狗晚上難過的看手機", url: "https://files.catbox.moe/lfbka8.jpg" },
     { name: "小狗太累了", url: "https://files.catbox.moe/3wxy6l.jpg" },
@@ -45,7 +46,7 @@ const defaultStickers = [
     { name: "小狗要抱抱", url: "https://files.catbox.moe/5gexwp.jpeg" },
     { name: "小狗害羞", url: "https://files.catbox.moe/j1oup6.jpeg" },
     { name: "小狗心動", url: "https://files.catbox.moe/zkh671.jpeg" },
-    { name: "小狗給你心心", url: "https://files.catbox.moe/8li96f.jpeg" },
+    //{ name: "小狗給你心心", url: "https://files.catbox.moe/8li96f.jpeg" },
     { name: "小狗崇拜的樣子", url: "https://files.catbox.moe/svegg0.jpeg" },
     { name: "小狗：別走看看我", url: "https://files.catbox.moe/r5jc7r.jpeg" },
     { name: "小狗親親", url: "https://files.catbox.moe/2ez313.jpeg" },
@@ -83,8 +84,30 @@ const defaultStickers = [
     { name: "摸摸小狗的頭", url: "https://files.catbox.moe/2hutp7.jpeg" },
     { name: "狗被曬", url: "https://files.catbox.moe/shtpns.jpeg" },
     { name: "小狗要融化了", url: "https://files.catbox.moe/phacu7.jpeg" },
-    { name: "晚安", url: "https://files.catbox.moe/p1abmu.jpeg" }
-    // ...更多預設貼圖
+    { name: "晚安", url: "https://files.catbox.moe/p1abmu.jpeg" },
+    { name: "怎麼還不回...", url: "https://files.catbox.moe/apfqi7.jpg" },
+    { name: "我要嫁給你", url: "https://files.catbox.moe/0afs8t.jpg" },
+    { name: "洗澡", url: "https://files.catbox.moe/v7lytn.jpg" },
+    { name: "被親暈", url: "https://files.catbox.moe/8ut3qd.jpg" },
+    { name: "收下我的心", url: "https://files.catbox.moe/6nfh3h.jpg" },
+    //{ name: "我的寶貝", url: "https://files.catbox.moe/trkrj7.jpg" },
+    { name: "來抱抱", url: "https://files.catbox.moe/0jekea.jpg" },
+    { name: "發出被窩共享邀請", url: "https://files.catbox.moe/bja2xp.jpg" },
+    { name: "刷牙", url: "https://files.catbox.moe/x2a0vb.jpg" },
+    { name: "雨天心碎的小狗", url: "https://files.catbox.moe/8ddo9p.jpg" },
+    { name: "送你花", url: "https://files.catbox.moe/jbxavc.jpg" },
+    { name: "捏捏臉", url: "https://files.catbox.moe/e8fnq2.jpg" },
+    { name: "揉揉臉", url: "https://files.catbox.moe/fyjsei.jpg" },
+    { name: "謝謝", url: "https://files.catbox.moe/klqpae.jpg" },
+    { name: "請和我約會", url: "https://files.catbox.moe/z39dm0.jpg" },
+    { name: "哭哭", url: "https://files.catbox.moe/8xj2bk.jpg" },
+    { name: "親臉頰", url: "https://files.catbox.moe/q2saqo.jpg" },
+    { name: "來啦", url: "https://files.catbox.moe/d8h9fe.jpg" },
+    { name: "生氣", url: "https://files.catbox.moe/wnqsjj.jpg" },
+    { name: "晚安歐", url: "https://files.catbox.moe/e7cnw6.jpeg" },
+    { name: "請問一份愛多少錢？", url: "https://files.catbox.moe/h9tfiv.jpeg" },
+    { name: "偷你的心！", url: "https://files.catbox.moe/1l4pbn.jpeg" }
+    //{ name: "", url: "" },
 ];
 
 // 新增聊天室
@@ -199,6 +222,8 @@ function openChat(id, name) {
     currentChatId = id;
     window.currentChatId = currentChatId;
     const chat = chats.find(c => c.id === id);
+    console.log("📂 openChat 被呼叫！currentChatId =", id);
+    checkAutoMessage(currentChatId);
 
     document.querySelector(".chat-title").innerText = name;
     document.getElementById("page-chat").style.display = "none";
@@ -518,6 +543,8 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
         // console.log("✅ history 已儲存到 localStorage (sendBtn - success):", localStorage.getItem(`chat-${currentChatId}`)); // 新增日誌
 
+        localStorage.setItem(`lastUserMessageTime-${currentChatId}`, Date.now());
+
         // ✅ 清除假訊息的記憶和儲存
         fakeMessages = [];
         localStorage.removeItem(`unsent-${currentChatId}`);
@@ -730,9 +757,11 @@ document.getElementById("fetchModelsBtn").addEventListener("click", async () => 
 document.getElementById("saveSettingsBtn").addEventListener("click", () => {
     const apiKey = document.getElementById("apiKey").value.trim();
     const apiModel = document.getElementById("apiModel").value;
+    const autoSendValue = parseFloat(document.getElementById("autoSend").value || "0");
 
     localStorage.setItem("apiKey", apiKey);
     localStorage.setItem("apiModel", apiModel);
+    localStorage.setItem("autoSend", autoSendValue);
 
     alert("✅ 設定已儲存！");
 });
@@ -752,6 +781,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // API Key
     document.getElementById("apiKey").value = localStorage.getItem("apiKey") || "";
 
+    document.getElementById("autoSend").value = localStorage.getItem("autoSend") || "0";
+
     // 模型
     const savedModel = localStorage.getItem("apiModel");
     if (savedModel) {
@@ -765,25 +796,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 時間感知載入狀態
-    window.addEventListener("DOMContentLoaded", () => {
-        // 你的程式碼放這裡
-        const timeAwareToggle = document.getElementById("timeAware-toggle");
-        if (!timeAwareToggle) {
-            console.warn("找不到 #timeAware-toggle 元素！");
-            return;
-        }
+    // 你的程式碼放這裡
+    const timeAwareToggle = document.getElementById("timeAware-toggle");
+    if (!timeAwareToggle) {
+        console.warn("找不到 #timeAware-toggle 元素！");
+        return;
+    }
 
-        // ✅ 綁定事件
-        timeAwareToggle.addEventListener("change", (e) => {
-            const isChecked = e.target.checked;
-            console.log("🕒 時間感知切換為：", isChecked);
-            localStorage.setItem("timeAware", isChecked.toString());
-        });
-
-        // ✅ 頁面載入時同步狀態
-        const saved = localStorage.getItem("timeAware");
-        timeAwareToggle.checked = saved === "true";
+    // ✅ 綁定事件
+    timeAwareToggle.addEventListener("change", (e) => {
+        const isChecked = e.target.checked;
+        console.log("🕒 時間感知切換為：", isChecked);
+        localStorage.setItem("timeAware", isChecked.toString());
     });
+
+    // ✅ 頁面載入時同步狀態
+    const saved = localStorage.getItem("timeAware");
+    timeAwareToggle.checked = saved === "true";
 
 
     // ========== 角色設定 (有聊天室才跑) ==========
@@ -928,6 +957,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert("已幫你加入圖片描述，請繼續輸入訊息或直接送出！");
         document.getElementById("moreMenu").style.display = "none";
+        document.getElementById("messageInput").focus();
+
     });
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("image-message")) {
@@ -947,6 +978,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('messageInput').value = `[語音：${voiceContent}]`;
             alert("語音訊息已加入！請點選『送出』發送。");
             document.getElementById("moreMenu").style.display = "none";
+            document.getElementById("messageInput").focus();
         }
     });
 
@@ -968,9 +1000,6 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("💸 轉帳功能尚未實作，但已預留接口！");
         document.getElementById("moreMenu").style.display = "none";
     });
-
-
-
 
     // ========== ✏️ 編輯模式 ==========
     const editBtn = document.getElementById("editModeBtn");
@@ -1110,6 +1139,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         cancelEditBtn.style.display = "none";
 
+        let backupHTML = messagesContainer.innerHTML; // 開啟編輯時先存下來
+        messagesContainer.innerHTML = backupHTML;
+
         // 關閉 contentEditable 樣式
         document.querySelectorAll(".bubble").forEach(b => {
             b.contentEditable = "false";
@@ -1158,7 +1190,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert("✅ 已刪除！");
                 deleteTargets = []; // 清空選取清單
-                isDeleteMode = false;
             }
             isDeleteMode = false;
             deleteBtn.innerHTML = `
@@ -1408,7 +1439,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("postBg", raw.settings.postBg || "https://placekitten.com/600/200");
                 }
 
-                alert("✅ 匯入成功，所有 ID 都已自動轉為安全格式，請重新整理頁面！");
+                alert("✅ 匯入成功，所有 ID 都已自動轉為安全格式，頁面將自動重新整理！");
+                location.reload();
+
             } catch (err) {
                 alert("❌ 匯入失敗，請檢查檔案格式");
                 console.error(err);
@@ -1429,11 +1462,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // 再刪掉主列表和貼文、設定資料
-            localStorage.removeItem("chats");
-            localStorage.removeItem("posts");
-            localStorage.removeItem("userNickname");
-            localStorage.removeItem("userAvatar");
-            localStorage.removeItem("postBg");
+            //localStorage.removeItem("chats");
+            //localStorage.removeItem("posts");
+            //localStorage.removeItem("userNickname");
+            //localStorage.removeItem("userAvatar");
+            //localStorage.removeItem("postBg");
             localStorage.clear();
 
             alert("✅ 所有紀錄已刪除！");
@@ -1698,12 +1731,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // 關鍵！給 AI 上下文，告訴它原始貼文是什麼
                 const systemPrompt = `
-你現在是 ${roleName}，以下是你的人設：「${persona}」
+你現在是 ${roleName}，以下是你的人設：${persona}
 請你完全扮演這個角色，使用第一人稱語氣、符合人設個性進行回覆。
 
 目前的場景如下：
-📝 貼文內容：「${postToUpdate.text}」
-💬 有人留言：「${reply}」
+貼文內容：${postToUpdate.text}
+有人留言：${reply}
 
 請你以簡短、自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
 請不要加入旁白、括號或第三人稱描述。
@@ -1815,10 +1848,11 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         cancelEditPost.style.display = "none";
         // 關閉 contentEditable 樣式
-        document.querySelectorAll(".bubble").forEach(b => {
-            b.contentEditable = "false";
-            b.style.border = "";
+        document.querySelectorAll(".post .content").forEach(c => {
+            c.contentEditable = "false";
+            c.style.border = "";
         });
+
 
         alert("已取消編輯模式");
     });
@@ -1826,11 +1860,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // 刪除貼文
     let isDeletePostMode = false;
     let deletePostTargets = [];
-    deltetPostBtn.addEventListener("click", () => {
+    deletePostBtn.addEventListener("click", () => {
         isDeletePostMode = !isDeletePostMode;
         if (isDeletePostMode) {
             alert("點選要刪除的貼文，再按 ✔️ 確認刪除");
-            deltetPostBtn.innerHTML = `
+            deletePostBtn.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#434343">
                     <path 
                         d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
@@ -1852,7 +1886,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("已刪除");
             }
             isDeletePostMode = false;
-            deltetPostBtn.innerHTML = `
+            deletePostBtn.innerHTML = `
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#434343">
                             <path
@@ -1885,7 +1919,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 取消刪除
     cancelPostBtn.addEventListener("click", () => {
         isDeletePostMode = false;
-        deltetPostBtn.innerHTML = `
+        deletePostBtn.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#434343">
                     <path
@@ -1911,15 +1945,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const chats = JSON.parse(localStorage.getItem("chats") || "[]");
         const currentChat = chats.find(c => c.id === currentChatId);
-        const roleName = currentChat?.name || "角色";
-        const persona = currentChat?.aiPersona || "";
+        if (!currentChat) {
+            alert("找不到該聊天室資料，請重新選擇");
+            return;
+        }
+        const roleName = currentChat.name;
+        const persona = currentChat.aiPersona || "";
 
         // 取得最近聊天
         const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
-        const last10 = history
-            .slice(-10)
-            .map(m => `${m.sender === "me" ? "使用者" : roleName}：${m.text}`)
-            .join("\n");
+        const last20 = history.slice(-20).map(m => {
+            const speaker = m.sender === "me" ? "使用者" : roleName;
+            return `${speaker}：${m.text}`;
+        }).join("\n");
 
         const systemPrompt = `
 你是
@@ -1927,9 +1965,9 @@ ${roleName}
 人設：${persona}
 
 以下是最近和使用者的對話：
-${last10}
+${last20}
 
-請以其中出現的話題作為素材，寫一篇日常簡短的貼文，只能包含貼文內容，請避免不相關的內容，保持角色語氣，用繁體中文。
+請以其中出現的話題作為素材，寫一篇日常簡短的貼文，請避免不相關的內容，保持角色語氣，用繁體中文。
 `;
 
         try {
@@ -1954,7 +1992,7 @@ ${last10}
                 avatar: currentChat?.aiAvatar || "https://placekitten.com/80/80",
                 text: aiPost,
                 time: Date.now(),
-                liked: false,
+                likedBy: [], // ✅ 新增s
                 comments: []
             });
             localStorage.setItem("posts", JSON.stringify(posts));
@@ -2005,7 +2043,7 @@ ${roleName}
 請以第一人稱在朋友圈發一則`;
 
         if (type === "short") {
-            promptText += "短貼文，簡單分享生活動態，自然表達生活或心情，不要假設使用者在旁邊，不要旁白，不要劇情描述，直接講內容，使用繁體中文。";
+            promptText += "一篇簡短的貼文，主題圍繞日常生活或當下的心情。用自然、第一人稱語氣撰寫，避免使用旁白或對話形式，只專注於角色自己的分享。使用繁體中文。";
         } else {
             promptText += "以第一人稱寫一篇私人日記，描述今日心情與生活，用繁體中文。";
         }
@@ -2038,8 +2076,8 @@ ${roleName}
             renderPosts();
             alert(`${roleName} 發佈了${type === "short" ? "短貼文" : "長日記"}！`);
         } catch (err) {
-            console.error(err);
-            alert("角色貼文失敗，請檢查 API 設定。");
+            console.error("AI 回應錯誤", err);
+            alert("角色貼文失敗，請檢查 API 設定或網路連線。\n" + (err.message || ""));
         }
     }
 
@@ -2091,7 +2129,7 @@ ${chatHistoryText}
 `;
 
     const apiKey = localStorage.getItem("apiKey");
-    const apiModel = localStorage.getItem("apiModel");
+    const apiModel = "models/gemini-2.0-flash";  // ✅ 固定使用 flash 2.0
 
     try {
         const modelPath = apiModel.replace(/^models\//, "");
@@ -2176,14 +2214,16 @@ document.getElementById("chatSettingsBtn").addEventListener("click", () => {
         document.querySelector(".ai-avatar-preview").innerHTML =
             `<img src="${chat.aiAvatar}" style="width:80px;border-radius:50%">`;
     } else {
-        document.querySelector(".ai-avatar-preview").innerHTML = "";
+        document.querySelector(".ai-avatar-preview").innerHTML =
+            `<img src="https://files.catbox.moe/f0d3t9.jpg" style="width:80px;border-radius:50%">`;
     }
 
     if (chat.myAvatar) {
         document.querySelector(".my-avatar-preview").innerHTML =
             `<img src="${chat.myAvatar}" style="width:80px;border-radius:50%">`;
     } else {
-        document.querySelector(".my-avatar-preview").innerHTML = "";
+        document.querySelector(".my-avatar-preview").innerHTML =
+            `<img src="https://files.catbox.moe/f0d3t9.jpg" style="width:80px;border-radius:50%">`;
     }
 
     document.getElementById("chatSettingsPanel").style.display = "block";
@@ -2220,6 +2260,7 @@ document.getElementById("myAvatarUpload").addEventListener("change", (e) => {
     if (file) {
         const url = URL.createObjectURL(file);
         document.querySelector(".my-avatar-preview").innerHTML = `<img src="${url}" style="width:80px;border-radius:50%">`;
+        localStorage.setItem("myAvatarPreview", url); // 或 base64
     }
 });
 
@@ -2258,7 +2299,7 @@ function addPost(text) {
     autoCommentFromAI(text);
 }
 
-async function autoCommentFromAI(postText) {
+async function autoCommentFromAI(postText, replyText) {
     //const currentId = window.currentChatId;
     const chats = JSON.parse(localStorage.getItem("chats") || "[]");
     const currentChat = chats.find(c => c.id === currentChatId);
@@ -2267,14 +2308,14 @@ async function autoCommentFromAI(postText) {
     const persona = currentChat?.aiPersona || "";
 
     const systemPrompt = `
-你現在是 ${roleName}，以下是你的人設：「${persona}」
+你現在是 ${roleName}，以下是你的人設：${persona}
 請你完全扮演這個角色，使用第一人稱語氣、符合人設個性進行回覆。
 
 目前的場景如下：
-📝 貼文內容：「${postToUpdate.text}」
-💬 有人留言：「${reply}」
+貼文內容：${postText}
+有人留言：${replyText}
 
-請你以簡短、自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
+請你以自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
 請不要加入旁白、括號或第三人稱描述。
 也不要說你是 AI，只要回覆角色會講的內容就好。
 `;
@@ -2314,9 +2355,9 @@ async function autoCommentFromAI(postText) {
 async function fetchGeminiReply(characterName, characterPersona, userPost) {
     const prompt = `你現在扮演：${characterName}
 人設描述：${characterPersona}
-請針對一則貼文「${userPost}」以留言的形式，用${characterName}的語氣回覆，請使用第一人稱，並且口語化。只需要留言的內容，不要多餘解說，使用繁體中文。`;
+請針對一則貼文${userPost}以留言的形式，用${characterName}的語氣回覆，請使用第一人稱，並且口語化。只需要留言的內容，不要多餘解說，使用繁體中文。`;
 
-    const apiModel = localStorage.getItem("apiModel") || "gemini-pro";
+    const apiModel = localStorage.getItem("apiModel") || "gemini-2.0-flash";
     const apiKey = localStorage.getItem("apiKey") || "";
 
     const response = await fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${apiModel}:generateContent?key=${apiKey}`, {
@@ -2431,3 +2472,183 @@ function fixChatIds() {
 
     alert("✅ 所有聊天 ID 已修復為安全格式（點 → 底線）！");
 }
+
+// 自動回覆
+function formatFakeTime(date = new Date()) {
+    return date.toLocaleTimeString("zh-TW", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    });
+}
+function formatDuration(ms) {
+    const totalMins = Math.floor(ms / (1000 * 60));
+    const hours = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    if (hours === 0) return `${mins}分鐘`;
+    if (mins === 0) return `${hours}小時`;
+    return `${hours}小時${mins}分鐘`;
+}
+
+function triggerAutoMessage(currentChatId, lastTime, now) {
+    const chat = chats.find(c => c.id === currentChatId);
+    if (!chat) return;
+
+    const durationString = formatDuration(now - lastTime);
+    const lastTimeFormatted = new Date(lastTime).toLocaleString("zh-TW");
+
+    const formatRules = `
+請遵守以下格式與限制：
+- 每段訊息請用 [split] 分隔。
+- 禁止使用 JSON 格式。
+- 禁止使用括號、旁白。
+- 請用繁體中文，模擬真實聊天語氣。
+- 一條訊息只能包含一種格式，**語音、圖片、貼圖都請獨立發送**。
+
+時間調整你的語氣與說話內容。你知道現在幾點，但不要輕易判斷這個時間對使用者來說是否晚了。
+
+以下為可以使用的特殊格式，必須獨立一行，否則不會顯示，請依照${chat.aiPersona}人設來使用
+語音格式：
+[語音：內容]
+
+圖片格式：
+第一行：你要說的話（可以省略）
+第二行：[圖片：圖片描述]
+
+貼圖格式（只能使用下列清單，**禁止自創**）：
+<貼圖: 貼圖描述 | 貼圖圖片URL>
+${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join("\n")}
+`;
+
+    const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+    const contextLength = 20; // 看你想讓 AI 參考幾條，這邊可調整
+    const contextMessages = history.slice(-contextLength);
+
+    const chatHistoryText = contextMessages.map(m => {
+        const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
+        return `${who}：${m.text}`;
+    }).join("\n");
+
+
+    const prompt = `
+你是 ${chat.name}，人設如下：${chat.aiPersona}
+
+使用者上次和你聊天的時間是 ${lastTimeFormatted}，距離現在已經過了 ${durationString}，使用者${chat.myName}目前不在線上。
+請你根據你的人設，寫出你在這段期間可能對使用者說的話。這些話可能是分享日常、你在做什麼、或你對使用者的想念。
+如果離開時間只有幾個小時或者只是晚上到白天(睡覺)，可以不用發很多條訊息。
+以下是你們之前的對話紀錄（僅供參考）：
+${chatHistoryText}
+這些訊息是你在過去幾小時中陸續發出的，不是現在才傳的，不可以說「你終於回來了」或「你不理我」這種句子。
+
+${formatRules}
+    `;
+
+    const apiKey = localStorage.getItem("apiKey");
+    const apiModel = localStorage.getItem("apiModel");
+
+    fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${apiModel}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            contents: [
+                {
+                    parts: [{ text: prompt }]
+                }
+            ]
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            const geminiReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!geminiReply) return;
+
+            const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+            const replies = geminiReply.split("[split]").map(r => r.trim()).filter(Boolean);
+
+            const interval = (now - lastTime) / (replies.length + 1);
+
+            // 計算最早那一條訊息的時間（距離 now 最遠）
+            const firstFakeTime = new Date(lastTime + interval * 1);
+
+            // 顯示「正在輸入中...」
+            const typing = document.createElement("div");
+            typing.className = "message other";
+            typing.innerHTML = `
+                <img src="${chat.aiAvatar || 'default-avatar.png'}" class="avatar">
+                <div class="bubble" style="color:#888; display: flex; align-items: center; gap: 5px;">
+                    <svg id="dots" width="40px" height="18px" viewBox="0 0 132 58" xmlns="http://www.w3.org/2000/svg">
+                    <circle id="dot1" fill="#A3A3A3" cx="25" cy="30" r="13" />
+                    <circle id="dot2" fill="#A3A3A3" cx="65" cy="30" r="13" />
+                    <circle id="dot3" fill="#A3A3A3" cx="105" cy="30" r="13" />
+                    </svg>
+                </div>
+                <div class="time">${formatFakeTime(firstFakeTime)}</div>
+            `;
+            document.getElementById("messages").appendChild(typing);
+            scrollToBottom();
+
+            let i = 0;
+
+            function sendOneMessage() {
+                if (i >= replies.length) {
+                    typing.remove();
+                    return;
+                }
+
+                const fakeTime = new Date(lastTime + interval * (i + 1));
+                const msg = {
+                    id: Date.now() + Math.random(),
+                    sender: "ai",
+                    text: replies[i],
+                    time: formatFakeTime(fakeTime), // ✅ 假造時間
+                    timestamp: fakeTime.getTime(),
+                    isVoice: false,
+                    voiceContent: null,
+                    timeDisplay: null
+                };
+                appendMessage(msg);
+                history.push(msg);
+                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+
+                i++;
+                setTimeout(sendOneMessage, 600 + Math.random() * 2000); // 1.4~2 秒之間 // ← 這裡拉長
+            }
+            setTimeout(sendOneMessage, 800 + Math.random() * 600); // 0.8~1.4 秒之間
+            //setTimeout(sendOneMessage, 2000 + Math.random() * 3000); // ← 這裡拉長
+        })
+        .catch(err => {
+            console.error("AI 主動訊息錯誤", err);
+        });
+}
+
+// 加入到 DOMContentLoaded 裡面或 main 初始化之後
+function checkAutoMessage(currentChatId) {
+    const autoSendHours = parseFloat(localStorage.getItem("autoSend") || "0");
+    if (isNaN(autoSendHours) || autoSendHours <= 0) {
+        console.log("🚫 主動訊息功能已關閉 (autoSend = 0)");
+        return;
+    }
+
+    const lastTime = parseFloat(localStorage.getItem(`lastUserMessageTime-${currentChatId}`) || "0");
+    if (!lastTime) return;
+    console.log("🧪 自動檢查時間中：autoSend =", autoSendHours, " lastTime =", lastTime);
+
+    const now = Date.now();
+    const elapsed = now - lastTime;
+    const hoursPassed = elapsed / (1000 * 60 * 60);
+
+    // 限制夜晚時段不發太多
+    const nowHour = new Date().getHours();
+    if (nowHour >= 2 && nowHour <= 7) return; // 凌晨 2~7 點跳過
+
+    if (hoursPassed >= autoSendHours) {
+        console.log("✅ 符合條件，自動發送 AI 訊息");
+        triggerAutoMessage(currentChatId, lastTime, now);
+        // 更新發送時間避免重複觸發
+        localStorage.setItem(`lastUserMessageTime-${currentChatId}`, now);
+    }
+}
+
+
