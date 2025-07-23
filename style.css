@@ -440,6 +440,7 @@ footer.footer-nav button:hover {
     background: #c0b3b3;
 }
 
+/* 心聲 */
 #heartVoice {
     visibility: hidden;
     pointer-events: none;

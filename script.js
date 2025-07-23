@@ -2129,11 +2129,12 @@ ${chatHistoryText}
 `;
 
     const apiKey = localStorage.getItem("apiKey");
-    const apiModel = "models/gemini-2.0-flash";  // ✅ 固定使用 flash 2.0
+    const apiModel = "gemini-2.0-flash";
+    //const apiModel = localStorage.getItem("apiModel");  // ✅ 固定使用 flash 2.0
 
     try {
-        const modelPath = apiModel.replace(/^models\//, "");
-        const res = await fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${modelPath}:generateContent?key=${apiKey}`, {
+        //const modelPath = apiModel.replace(/^models\//, "");
+        const res = await fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${apiModel}:generateContent?key=${apiKey}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -2474,6 +2475,47 @@ function fixChatIds() {
 }
 
 // 自動回覆
+function showAiNewMessageBanner() {
+    // 避免重複出現
+    if (document.getElementById("ai-banner")) return;
+
+    const banner = document.createElement("div");
+    banner.id = "ai-banner";
+    banner.innerHTML = `
+        有新訊息喔！
+        <span style="margin-left: 12px; cursor: pointer; font-weight: bold;" id="banner-close">✖</span>
+    `;
+    banner.style = `
+        position: fixed;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ffe4ec;
+        color: #333;
+        padding: 10px 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 14px;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        transition: opacity 0.3s ease;
+    `;
+
+    document.body.appendChild(banner);
+
+    // 點叉叉關閉
+    document.getElementById("banner-close").addEventListener("click", () => {
+        banner.remove();
+    });
+
+    // 自動消失
+    setTimeout(() => {
+        if (banner) banner.style.opacity = "0";
+        setTimeout(() => banner.remove(), 300);
+    }, 3000);
+}
+
 function formatFakeTime(date = new Date()) {
     return date.toLocaleTimeString("zh-TW", {
         hour: "2-digit",
@@ -2645,6 +2687,7 @@ function checkAutoMessage(currentChatId) {
 
     if (hoursPassed >= autoSendHours) {
         console.log("✅ 符合條件，自動發送 AI 訊息");
+        showAiNewMessageBanner();
         triggerAutoMessage(currentChatId, lastTime, now);
         // 更新發送時間避免重複觸發
         localStorage.setItem(`lastUserMessageTime-${currentChatId}`, now);
