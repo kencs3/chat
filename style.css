@@ -147,6 +147,22 @@ footer.footer-nav button:hover {
     /* 內容可滾動 */
 }
 
+.addChatText {
+    font-size: 18px;
+    font-weight: bold;
+    color: #56628b;
+    margin: 10px 0 10px;
+}
+
+.modal-content label {
+    display: block;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 4px;
+    font-size: 15px;
+    color: #5c5342;
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -305,6 +321,32 @@ footer.footer-nav button:hover {
     box-sizing: border-box;
     background-color: #ffffff;
     height: calc(100vh - 175px);
+    /* 背景圖片 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 桌布 */
+.wallpaper {
+    width: 100px;
+    height: 100px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    background-size: cover;
+    background-position: center;
+}
+
+#resetBgBtn,
+#resetBubbleStyleBtn {
+    margin-top: 12px;
+    background-color: #b5bfe2;
+    color: #282320;
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    font-size: 13px;
+    cursor: pointer;
 }
 
 .chat-input {
@@ -508,13 +550,13 @@ footer.footer-nav button:hover {
     /* 模仿 chat-bubble-receive 的圓角 */
     padding: 7px 10px;
     /* 與目標一致 */
+    color: #282320;
 }
 
 .message.other .bubble {
-    background-color: #fff;
+    background-color: #eef5ff;
     /* 保留白色 */
     text-align: left;
-    border: 1px solid #ccc;
     position: relative;
     align-self: flex-end;
     justify-content: flex-end;
@@ -522,6 +564,8 @@ footer.footer-nav button:hover {
     /* 模仿 chat-bubble-send 的圓角 */
     padding: 7px 13px;
     /* 與目標一致 */
+    color: #282320;
+    /* #56628b, #695c8c, #a46d8c, #d8bfd8, #b8a4d8 */
 }
 
 @keyframes fade-in {
@@ -776,18 +820,83 @@ footer.footer-nav button:hover {
 .chat-settings-panel label {
     display: block;
     font-weight: bold;
-    margin-top: 12px;
+    margin-top: 5px;
     margin-bottom: 4px;
-    font-size: 16px;
+    font-size: 13px;
+    color: #5c5342;
 }
 
 .chat-settings-panel input[type="text"],
 .chat-settings-panel textarea {
     width: 100%;
     box-sizing: border-box;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-size: 16px;
 }
+
+.chatSettingText {
+    font-size: 17px;
+    font-weight: bold;
+    color: #56628b;
+    margin: 10px 0 5px;
+}
+
+/* 分隔線 */
+.settingline {
+    width: 98%;
+    height: 2px;
+    background-color: #ccc;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    /* 可調整上下間距 */
+}
+
+/* 更換泡泡顏色 */
+.bubble-style-pair {
+    display: flex;
+    margin-bottom: 5px;
+    align-items: flex-start;
+    width: 280px;
+}
+
+.bubble-style-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 280px;
+}
+
+.bubble-style-col label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.bubble-style-col input[type="color"] {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.color-code {
+    font-family: monospace;
+    font-size: 14px;
+    padding-left: 4px;
+}
+
+/* 分隔線 */
+.bubbleline {
+    width: 2px;
+    background-color: #555151;
+    /* 分隔線顏色，可自訂 */
+    height: 65px;
+    align-self: stretch;
+    margin: 10px 10px 0px 0px;
+}
+
 
 #aiPersonaInput,
 #myPersonaInput {
@@ -797,15 +906,17 @@ footer.footer-nav button:hover {
     /* 確保最小高度 */
 }
 
+/* 
 .chat-settings-panel h3 {
     margin-bottom: 4px;
-    /* 比預設小 */
+    比預設小
 }
 
 .chat-settings-panel h4 {
     margin-bottom: 4px;
-    /* 比預設小 */
+    比預設小
 }
+*/
 
 .chat-settings-panel textarea {
     min-height: 60px;

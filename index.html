@@ -210,52 +210,98 @@
 
         <!-- 這是聊天室設定 -->
         <div id="chatSettingsPanel" class="chat-settings-panel" style="display:none;">
-            <h3>聊天室設定</h3>
+            <div class="chatSettingText">聊天室設定</div>
             <label>更改角色名稱</label>
             <input type="text" id="chatNameInput">
-            <h4>他的人設</h4>
+            <label>他的人設</label>
             <textarea id="aiPersonaInput" placeholder="輸入他的人設"></textarea>
             <label>頭貼</label>
             <input type="text" id="aiAvatarUrlInput" placeholder="https://..." />
             <div class="ai-avatar-preview"></div>
             <label>上下文記憶條數</label>
             <input type="number" id="contextLengthInput" placeholder="預設是 3 條" min="0" />
+            <br>
             <small style="font-size: 12px; color: #888;">AI 每次回覆會讀取幾則你們之前的對話。</small>
 
-            <h3>我的設定</h4>
-                <label>我的名稱</label>
-                <input type="text" id="myNameInput" placeholder="我的名字" />
-                <h4>我的人設</h4>
-                <textarea id="myPersonaInput" placeholder="輸入我的人設"></textarea>
-                <label>頭貼</label>
-                <input type="text" id="myAvatarUrlInput" placeholder="https://...">
-                <div class="my-avatar-preview"></div>
+            <div class="settingline"></div>
 
-                <button id="saveSettingsBtn2">儲存設定</button>
-                <button id="cancelSettingsBtn">取消</button>
+            <div class="chatSettingText">我的設定</div>
+            <label>我的名稱</label>
+            <input type="text" id="myNameInput" placeholder="我的名字" />
+            <label>我的人設</label>
+            <textarea id="myPersonaInput" placeholder="輸入我的人設"></textarea>
+            <label>頭貼</label>
+            <input type="text" id="myAvatarUrlInput" placeholder="https://...">
+            <div class="my-avatar-preview"></div>
+
+            <div class="chatSettingText">聊天背景</div>
+            <input type="text" id="background" placeholder="https://..." />
+            <div class="wallpaper"></div>
+            <button id="resetBgBtn">重置為白色背景</button>
+
+            <div class="settingline"></div>
+
+            <div class="chatSettingText">聊天泡泡樣式</div>
+
+            <div class="bubble-style-pair">
+                <div class="bubbleline"></div>
+                <div class="bubble-style-col">
+                    <label>我的泡泡背景色</label>
+                    <input type="color" id="myBubbleBgColor" />
+                    <div class="color-code" id="myBubbleBg">#f8d7da</div>
+                </div>
+                <div class="bubbleline"></div>
+                <div class="bubble-style-col">
+                    <label>我的字體顏色</label>
+                    <input type="color" id="myBubbleTextColor" />
+                    <div class="color-code" id="myBubbleText">#282320</div>
+                </div>
+            </div>
+
+            <div class="bubble-style-pair">
+                <div class="bubbleline"></div>
+                <div class="bubble-style-col">
+                    <label>他的泡泡背景色</label>
+                    <input type="color" id="aiBubbleBgColor" />
+                    <div class="color-code" id="aiBubbleBg">#eef5ff</div>
+                </div>
+                <div class="bubbleline"></div>
+                <div class="bubble-style-col">
+                    <label>他的字體顏色</label>
+                    <input type="color" id="aiBubbleTextColor" />
+                    <div class="color-code" id="aiBubbleText">#282320</div>
+                </div>
+            </div>
+
+            <button id="resetBubbleStyleBtn">重置氣泡樣式</button>
+
+            <div class="settingline"></div>
+
+            <button id="saveSettingsBtn2">儲存設定</button>
+            <button id="cancelSettingsBtn">取消</button>
         </div>
 
         <!-- 新增聊天室 Modal -->
         <div id="addChatModal" class="modal" style="display:none;">
             <div class="modal-content">
-                <h3>新增聊天室</h3>
+                <div class="addChatText">新增聊天室</div>
 
-                <label>角色名稱</label><br>
-                <input type="text" id="newChatName" placeholder="請輸入角色名稱" /><br>
+                <label>角色名稱</label>
+                <input type="text" id="newChatName" placeholder="請輸入角色名稱" />
 
-                <label>角色人設</label><br>
-                <textarea id="newAiPersona" placeholder="請輸入角色人設"></textarea><br>
+                <label>角色人設</label>
+                <textarea id="newAiPersona" placeholder="請輸入角色人設"></textarea>
 
-                <label>角色頭像</label><br>
-                <input type="text" id="newAiAvatar" placeholder="https://..." /><br>
+                <label>角色頭像</label>
+                <input type="text" id="newAiAvatar" placeholder="https://..." />
                 <br>
-                <label>我的名稱</label><br>
-                <input type="text" id="newMyName" placeholder="請輸入我的名稱" /><br>
-                <label>我的人設</label><br>
-                <textarea id="newMyPersona" placeholder="請輸入我的人設"></textarea><br>
+                <label>我的名稱</label>
+                <input type="text" id="newMyName" placeholder="請輸入我的名稱" />
+                <label>我的人設</label>
+                <textarea id="newMyPersona" placeholder="請輸入我的人設"></textarea>
 
-                <label>我的頭像</label><br>
-                <input type="text" id="newMyAvatar" placeholder="https://..." /><br>
+                <label>我的頭像</label>
+                <input type="text" id="newMyAvatar" placeholder="https://..." />
 
                 <div class="modal-actions" style="margin-top: 10px;">
                     <button id="cancelAddChat">取消</button>

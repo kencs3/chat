@@ -216,6 +216,39 @@ function addChatToList(id, name) {
 
 
 let currentAiPersona = "";  // 放在最前面，其他地方也能用
+function applyBubbleStyles(chatId) {
+    chatId = chatId || currentChatId; // 沒傳參數就用現在這個聊天室
+
+    const meBubbleBg = localStorage.getItem(`myBubbleBgColor-${chatId}`) || "#f8d7da";
+    const meTextColor = localStorage.getItem(`myBubbleTextColor-${chatId}`) || "#282320";
+    const aiBubbleBg = localStorage.getItem(`aiBubbleBgColor-${chatId}`) || "#eef5ff";
+    const aiTextColor = localStorage.getItem(`aiBubbleTextColor-${chatId}`) || "#282320";
+
+    const styleTag = document.getElementById("dynamicBubbleStyle") || document.createElement("style");
+    styleTag.id = "dynamicBubbleStyle";
+    styleTag.innerHTML = `
+        .message.me .bubble {
+            background-color: ${meBubbleBg};
+            color: ${meTextColor};
+        }
+        .message.other .bubble {
+            background-color: ${aiBubbleBg};
+            color: ${aiTextColor};
+        }
+    `;
+    document.head.appendChild(styleTag);
+
+    // 顯示目前值（若有設定面板）
+    document.getElementById("myBubbleBgColor").value = meBubbleBg;
+    document.getElementById("myBubbleTextColor").value = meTextColor;
+    document.getElementById("aiBubbleBgColor").value = aiBubbleBg;
+    document.getElementById("aiBubbleTextColor").value = aiTextColor;
+
+    document.getElementById("myBubbleBg").innerText = meBubbleBg;
+    document.getElementById("myBubbleText").innerText = meTextColor;
+    document.getElementById("aiBubbleBg").innerText = aiBubbleBg;
+    document.getElementById("aiBubbleText").innerText = aiTextColor;
+}
 
 // 進入聊天室
 function openChat(id, name) {
@@ -229,7 +262,6 @@ function openChat(id, name) {
     document.getElementById("page-chat").style.display = "none";
     document.getElementById("page-chatroom").style.display = "block";
     document.getElementById("contextLengthInput").value = chat.contextLength || 3;
-
 
     // 清空
     const messagesContainer = document.getElementById("messages");
@@ -263,12 +295,20 @@ function openChat(id, name) {
     }, 100); // 給予100毫秒的延遲，可以根據實際效果調整
 
 
+    applyBubbleStyles(id); // ✅ 開聊天室時套用對應設定
+
     if (chat?.aiAvatar) {
         const avatarImg = document.querySelector(".chat-room-avatar");
         if (avatarImg) {
             avatarImg.src = chat.aiAvatar;
         }
     }
+    // ✅ 在這裡加上背景圖套用邏輯：
+    const bg = localStorage.getItem(`chatBackground-${id}`) || "";
+    const msgBox = document.getElementById("messages");
+    msgBox.style.backgroundImage = bg ? `url('${bg}')` : "none";
+    msgBox.style.backgroundSize = "cover";
+    msgBox.style.backgroundPosition = "center";
 
     // 讀取當前聊天室的人設
     currentAiPersona = chat?.aiPersona || "";  // 一次讀出
@@ -489,7 +529,7 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         });
 
         const data = await res.json();
-        typing.remove();
+        //typing.remove();
 
         const geminiReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
         console.log("🎯 Gemini 原始回傳：", geminiReply);
@@ -550,7 +590,7 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
 
             setTimeout(sendOne, 700 + Math.random() * 1000); // 每條 0.7~2 秒
         }
-        setTimeout(sendOne, 700); // 首條延遲 0.7 秒
+        setTimeout(sendOne, 200); // 首條延遲 0.7 秒
 
     } catch (err) {
         typing.remove();
@@ -622,8 +662,8 @@ function appendMessage(msg) {
 
             bubbleContentHtml += `
                 <div class="voice-message" id="${voiceBubbleId}" data-content="${voiceContent}">
-                    <img width="24" height="24" src="https://img.icons8.com/material-rounded/24/play--v1.png" alt="play--v1"/>
-                    <img width="23" height="23" src="https://img.icons8.com/ios/50/audio-wave--v1.png" alt="audio-wave--v1"/>
+                    <img width="22" height="22" src="https://img.icons8.com/material-rounded/24/play--v1.png" alt="play--v1"/>
+                    <img width="24" height="24" src="https://img.icons8.com/ios/50/audio-wave--v1.png" alt="audio-wave--v1"/>
                     <span>${voiceDuration}</span>
                 </div>
             `;
@@ -1226,7 +1266,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 bubble.style.backgroundColor = "";
             } else {
                 deleteTargets.push(id);
-                bubble.style.backgroundColor = "rgb(196, 134, 159)";
+                bubble.style.backgroundColor = "#c4869f";
             }
         }
 
@@ -1252,6 +1292,80 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ========== 其他監聽 ==========
+    document.getElementById("resetBgBtn").addEventListener("click", () => {
+        if (!currentChatId) {
+            alert("未選擇聊天室！");
+            return;
+        }
+
+        // 清除 localStorage 裡的背景圖和顏色
+        localStorage.removeItem(`chatBackground-${currentChatId}`);
+        localStorage.removeItem(`chatBgColor-${currentChatId}`);
+
+        // 清除畫面上的圖片背景
+        const msgBox = document.getElementById("messages");
+        msgBox.style.backgroundImage = "none";
+        msgBox.style.backgroundColor = "#ffffff";
+
+        // 清空輸入框與預覽
+        document.getElementById("background").value = "";
+        const preview = document.querySelector(".wallpaper");
+        if (preview) {
+            preview.style.backgroundImage = "none";
+        }
+
+        alert("已重置為白色背景！");
+    });
+
+    // ================== bubble泡泡顏色 =====================
+    window.addEventListener("DOMContentLoaded", () => {
+        if (currentChatId) {
+            applyBubbleStyles(currentChatId);
+        }
+
+        // 每個 input 的 input 事件都順便更新 span 顯示
+        document.getElementById("myBubbleBgColor").addEventListener("input", e => {
+            const color = e.target.value;
+            localStorage.setItem(`myBubbleBgColor-${currentChatId}`, color);
+            document.getElementById("myBubbleBg").innerText = color;
+            applyBubbleStyles(currentChatId); // ✅ 傳入 ID
+        });
+
+        document.getElementById("myBubbleTextColor").addEventListener("input", e => {
+            const color = e.target.value;
+            localStorage.setItem(`myBubbleTextColor-${currentChatId}`, color);
+            document.getElementById("myBubbleText").innerText = color;
+            applyBubbleStyles(currentChatId); // ✅ 傳入 ID
+        });
+
+        document.getElementById("aiBubbleBgColor").addEventListener("input", e => {
+            const color = e.target.value;
+            localStorage.setItem(`aiBubbleBgColor-${currentChatId}`, color);
+            document.getElementById("aiBubbleBg").innerText = color;
+            applyBubbleStyles(currentChatId); // ✅ 傳入 ID
+        });
+
+        document.getElementById("aiBubbleTextColor").addEventListener("input", e => {
+            const color = e.target.value;
+            localStorage.setItem(`aiBubbleTextColor-${currentChatId}`, color);
+            document.getElementById("aiBubbleText").innerText = color;
+            applyBubbleStyles(currentChatId); // ✅ 傳入 ID
+        });
+
+        document.getElementById("resetBubbleStyleBtn").addEventListener("click", () => {
+            if (!currentChatId) return;
+
+            localStorage.removeItem(`myBubbleBgColor-${currentChatId}`);
+            localStorage.removeItem(`myBubbleTextColor-${currentChatId}`);
+            localStorage.removeItem(`aiBubbleBgColor-${currentChatId}`);
+            localStorage.removeItem(`aiBubbleTextColor-${currentChatId}`);
+
+            applyBubbleStyles(currentChatId);
+            alert("✅ 已重置本聊天室的氣泡樣式");
+        });
+    });
+
+
     document.getElementById("chatSettingsBtn").addEventListener("click", () => {
         //const currentId = window.currentChatId;
         if (!currentChatId) {
@@ -1259,6 +1373,30 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         const chat = chats.find(c => c.id === currentChatId);
+        // 加入背景圖片欄位的值與預覽
+        const bg = localStorage.getItem(`chatBackground-${currentChatId}`) || "";
+        document.getElementById("background").value = bg;
+        const preview = document.querySelector(".wallpaper");
+        if (preview) {
+            preview.style.backgroundImage = bg ? `url('${bg}')` : "none";
+            preview.style.backgroundSize = "cover";
+            preview.style.backgroundPosition = "center";
+        }
+        const meBg = localStorage.getItem(`myBubbleBgColor-${currentChatId}`) || "#f8d7da";
+        const meText = localStorage.getItem(`myBubbleTextColor-${currentChatId}`) || "#282320";
+        const aiBg = localStorage.getItem(`aiBubbleBgColor-${currentChatId}`) || "#eef5ff";
+        const aiText = localStorage.getItem(`aiBubbleTextColor-${currentChatId}`) || "#282320";
+
+        document.getElementById("myBubbleBgColor").value = meBg;
+        document.getElementById("myBubbleTextColor").value = meText;
+        document.getElementById("aiBubbleBgColor").value = aiBg;
+        document.getElementById("aiBubbleTextColor").value = aiText;
+
+        document.getElementById("myBubbleBg").innerText = meBg;
+        document.getElementById("myBubbleText").innerText = meText;
+        document.getElementById("aiBubbleBg").innerText = aiBg;
+        document.getElementById("aiBubbleText").innerText = aiText;
+
         if (chat) {
             document.getElementById("chatNameInput").value = chat.name || "";
             document.getElementById("aiPersonaInput").value = chat.aiPersona || "";
@@ -1273,6 +1411,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cancelSettingsBtn").addEventListener("click", () => {
         document.getElementById("chatSettingsPanel").style.display = "none";
     });
+    window.addEventListener("DOMContentLoaded", () => {
+        if (!currentChatId) return;
+
+        const bg = localStorage.getItem(`chatBackground-${currentChatId}`);
+        if (bg) {
+            const msgBox = document.getElementById("messages");
+            msgBox.style.backgroundImage = `url('${bg}')`;
+            msgBox.style.backgroundSize = "cover";
+            msgBox.style.backgroundPosition = "center";
+        }
+    });
+
 
     // 監聽儲存
     document.getElementById("saveSettingsBtn2").addEventListener("click", () => {
@@ -1312,6 +1462,36 @@ document.addEventListener("DOMContentLoaded", () => {
             chats[idx].myAvatar = myAvatar;
 
             localStorage.setItem("chats", JSON.stringify(chats));
+            // 🔽 儲存背景圖網址到 localStorage（每個聊天室一筆）
+            const bgUrl = document.getElementById("background").value.trim();
+            localStorage.setItem(`chatBackground-${currentChatId}`, bgUrl);
+
+            // 🔽 即時套用到聊天室視窗
+            const msgBox = document.getElementById("messages");
+            msgBox.style.backgroundImage = bgUrl ? `url('${bgUrl}')` : "none";
+            msgBox.style.backgroundSize = "cover";
+            msgBox.style.backgroundPosition = "center";
+
+            // 🔽 套用預覽圖片
+            const preview = document.querySelector(".wallpaper");
+            if (preview) {
+                preview.style.backgroundImage = bgUrl ? `url('${bgUrl}')` : "none";
+                preview.style.backgroundSize = "cover";
+                preview.style.backgroundPosition = "center";
+            }
+            const myBubbleBg = document.getElementById("myBubbleBgColor").value.trim();
+            const myTextColor = document.getElementById("myBubbleTextColor").value.trim();
+            const aiBubbleBg = document.getElementById("aiBubbleBgColor").value.trim();
+            const aiTextColor = document.getElementById("aiBubbleTextColor").value.trim();
+
+            localStorage.setItem(`myBubbleBgColor-${currentChatId}`, myBubbleBg);
+            localStorage.setItem(`myBubbleTextColor-${currentChatId}`, myTextColor);
+            localStorage.setItem(`aiBubbleBgColor-${currentChatId}`, aiBubbleBg);
+            localStorage.setItem(`aiBubbleTextColor-${currentChatId}`, aiTextColor);
+
+            applyBubbleStyles(currentChatId); // 即時套用
+
+
             // 更新畫面
             document.querySelector(".chat-title").innerText = newName;
             renderChatList();
@@ -1330,10 +1510,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const rawChats = JSON.parse(localStorage.getItem("chats") || "[]");
 
-        const chats = rawChats.map(chat => ({
-            ...chat,
-            id: fixId(chat.id)
-        }));
+        const chats = rawChats.map(chat => {
+            const fixedId = fixId(chat.id);
+            return {
+                ...chat,
+                id: fixedId,
+                background: localStorage.getItem(`chatBackground-${fixedId}`) || ""
+            };
+        });
+
 
         const messages = {};
         chats.forEach(chat => {
@@ -1400,6 +1585,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     chat.id = fixId(chat.id);
                     return chat;
                 });
+                // 寫入每個聊天室的背景圖片網址
+                chats.forEach(chat => {
+                    if (chat.background) {
+                        localStorage.setItem(`chatBackground-${chat.id}`, chat.background);
+                    }
+                });
+
 
                 const messages = {};
                 Object.keys(raw.messages).forEach(oldId => {
@@ -1864,6 +2056,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let deletePostTargets = [];
     deletePostBtn.addEventListener("click", () => {
         isDeletePostMode = !isDeletePostMode;
+        console.log("點了");
         if (isDeletePostMode) {
             alert("點選要刪除的貼文，再按 ✔️ 確認刪除");
             deletePostBtn.innerHTML = `
@@ -1928,6 +2121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                 </svg>
         `;
+        console.log("點了");
         cancelPostBtn.style.display = "none";
         deletePostTargets = [];
         document.querySelectorAll(".post").forEach(p => {
@@ -1937,7 +2131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("已取消刪除模式");
     });
 
-    // 角色發動態
+    // 角色發貼文
     document.getElementById("characterPostBtn").addEventListener("click", async () => {
         //const currentId = window.currentChatId;
         if (!currentChatId) {
@@ -1947,6 +2141,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const chats = JSON.parse(localStorage.getItem("chats") || "[]");
         const currentChat = chats.find(c => c.id === currentChatId);
+        console.log("點了");
         if (!currentChat) {
             alert("找不到該聊天室資料，請重新選擇");
             return;
@@ -2028,6 +2223,7 @@ ${last20}
             alert("請先選擇一個聊天室，因為要抓角色設定。");
             return;
         }
+        console.log("點了");
         const chats = JSON.parse(localStorage.getItem("chats") || "[]");
         const currentChat = chats.find(c => c.id === currentChatId);
         if (!currentChat) {
@@ -2580,6 +2776,8 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
 使用者上次和你聊天的時間是 ${lastTimeFormatted}，距離現在已經過了 ${durationString}，使用者${chat.myName}目前不在線上。
 請你根據你的人設，寫出你在這段期間可能對使用者說的話。這些話可能是分享日常、你在做什麼、或你對使用者的想念。
 如果離開時間只有幾個小時或者只是晚上到白天(睡覺)，可以不用發很多條訊息。
+請注意，請不要讓角色在凌晨或清晨（例如 5 點、6 點）發出訊息，除非人設明確設定是早起型。
+
 以下是你們之前的對話紀錄（僅供參考）：
 ${chatHistoryText}
 這些訊息是你在過去幾小時中陸續發出的，不是現在才傳的，不可以說「你終於回來了」或「你不理我」這種句子。
