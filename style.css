@@ -872,13 +872,14 @@ footer.footer-nav button:hover {
 }
 
 .bubble-style-col input[type="color"] {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 4px;
-    padding: 0;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    /* 圓角 */
     background: none;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .color-code {
