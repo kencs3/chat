@@ -546,32 +546,10 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
 
 
         // 📤 處理 AI 回覆（切段 + 避免重複圖片網址）
-
         let i = 0;
+
         function sendOne() {
-            if (i >= replies.length) {
-                typing.remove();
-
-                // 儲存 history 前去重
-                const uniqueHistory = [];
-                const seenIds = new Set();
-                for (let j = history.length - 1; j >= 0; j--) {
-                    const msg = history[j];
-                    if (!seenIds.has(msg.id)) {
-                        uniqueHistory.unshift(msg);
-                        seenIds.add(msg.id);
-                    }
-                }
-                history = uniqueHistory; // 用去重複後的陣列替換原有的 history
-
-                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
-                localStorage.setItem(`lastUserMessageTime-${currentChatId}`, Date.now());
-                fakeMessages = [];
-                localStorage.removeItem(`unsent-${currentChatId}`);
-                scrollToBottom();
-                return;
-            }
-
+            // ✅ 先組成訊息
             const reply = replies[i];
             const msg = {
                 id: Date.now() + Math.random(),
@@ -584,13 +562,40 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
                 timestamp: Date.now()
             };
 
+            // ✅ 顯示訊息
             appendMessage(msg);
             history.push(msg);
-            i++;
 
-            setTimeout(sendOne, 700 + Math.random() * 1000); // 每條 0.7~2 秒
+            i++; // 移到下一條
+
+            // ✅ 最後一條送完後，這裡才結束並移除 typing
+            if (i >= replies.length) {
+                // 去重、儲存（這時 history 最完整）
+                const uniqueHistory = [];
+                const seenIds = new Set();
+                for (let j = history.length - 1; j >= 0; j--) {
+                    const msg = history[j];
+                    if (!seenIds.has(msg.id)) {
+                        uniqueHistory.unshift(msg);
+                        seenIds.add(msg.id);
+                    }
+                }
+                history = uniqueHistory;
+                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+                localStorage.setItem(`lastUserMessageTime-${currentChatId}`, Date.now());
+                fakeMessages = [];
+                localStorage.removeItem(`unsent-${currentChatId}`);
+
+                typing.remove();
+                scrollToBottom();
+                return;
+            }
+
+            setTimeout(sendOne, 700 + Math.random() * 1000);
         }
-        setTimeout(sendOne, 200); // 首條延遲 0.7 秒
+
+        setTimeout(sendOne, 200);
+
 
     } catch (err) {
         typing.remove();
