@@ -2686,17 +2686,17 @@ function showAiNewMessageBanner() {
     banner.id = "ai-banner";
     banner.innerHTML = `
         有新訊息喔！
-        <span style="margin-left: 12px; cursor: pointer; font-weight: bold;" id="banner-close">✖</span>
+        <span style="margin-left: 12px; cursor: pointer; font-weight: bold; color: white;" id="banner-close">✖</span>
     `;
     banner.style = `
         position: fixed;
         top: 100px;
         left: 50%;
         transform: translateX(-50%);
-        background: #ffe4ec;
-        color: #333;
+        background: #8f5163;
+        color: #fff3f6;
         padding: 10px 20px;
-        border-radius: 20px;
+        border-radius: 15px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         font-size: 14px;
         z-index: 9999;
@@ -2773,7 +2773,6 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
         return `${who}：${m.text}`;
     }).join("\n");
-
 
     const prompt = `
 你是 ${chat.name}，人設如下：${chat.aiPersona}
