@@ -667,9 +667,12 @@ function appendMessage(msg) {
 
             bubbleContentHtml += `
                 <div class="voice-message" id="${voiceBubbleId}" data-content="${voiceContent}">
-                    <img width="22" height="22" src="https://img.icons8.com/material-rounded/24/play--v1.png" alt="play--v1"/>
-                    <img width="24" height="24" src="https://img.icons8.com/ios/50/audio-wave--v1.png" alt="audio-wave--v1"/>
-                    <span>${voiceDuration}</span>
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <img width="25" height="25" src="https://img.icons8.com/material-rounded/24/play--v1.png" alt="play--v1" style="margin-right: 6px;" />
+                        <img width="25" height="25" src="https://img.icons8.com/windows/32/audio-wave--v1.png" alt="audio-wave--v1" />
+                        <img width="25" height="25" src="https://img.icons8.com/windows/32/audio-wave--v1.png" alt="audio-wave--v1" style="margin-right: 8px;" />
+                        <span style="font-size: 14px;">${voiceDuration}</span>
+                    </div>
                 </div>
             `;
             // 儲存事件綁定信息
