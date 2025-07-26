@@ -780,7 +780,7 @@ document.getElementById("fetchModelsBtn").addEventListener("click", async () => 
 
     try {
         // 這邊以 Gemini 為例，實際你的端點可再改
-        const res = await fetch("https://generativelanguage.googleapis.com/v1/models?key=" + apiKey);
+        const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models?key=" + apiKey);
         const data = await res.json();
 
         const select = document.getElementById("apiModel");
