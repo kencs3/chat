@@ -249,6 +249,9 @@ function applyBubbleStyles(chatId) {
     document.getElementById("aiBubbleBg").innerText = aiBubbleBg;
     document.getElementById("aiBubbleText").innerText = aiTextColor;
 }
+function getCurrentChatName() {
+    return localStorage.getItem(`${currentChatId}_chatName`) || "對方";
+}
 
 // 進入聊天室
 function openChat(id, name) {
@@ -321,6 +324,90 @@ document.querySelector(".back-btn").addEventListener("click", () => {
     document.getElementById("page-chat").style.display = "block";
 });
 
+async function fetchAiReply(prompt) {
+    console.log("🧠 傳給 AI 的 prompt：", prompt);
+
+    const model = localStorage.getItem("apiModel");
+    const apiKey = localStorage.getItem("apiKey");
+
+    const res = await fetch(`https://kiki73.shan733kiki.workers.dev/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            contents: [
+                {
+                    parts: [{ text: prompt }]
+                }
+            ]
+        })
+    });
+
+    const data = await res.json();
+
+    // 根據 Gemini 回傳格式取回文字
+    try {
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    } catch (e) {
+        console.error("AI 回應解析失敗", data);
+        return "";
+    }
+}
+
+function getChatDisplayName(sender) {
+    const currentChatId = window.currentChatId;
+    const chat = chats.find(c => c.id === currentChatId);
+
+    if (!chat) return sender === "me" ? "對方" : "你";
+
+    return sender === "me"
+        ? (chat.name || "對方")
+        : (chat.myName || "你");
+}
+
+
+// 狀態文字顯示
+function getTransferStatusText(status) {
+    switch (status) {
+        case "accepted": return "已接受";
+        case "rejected": return "已拒絕";
+        default: return "等待對方處理中...";
+    }
+}
+
+// 處理「接受 / 拒絕」的邏輯
+function handleTransfer(id, accept) {
+    const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+    const index = history.findIndex(m => m.id == id);
+    if (index === -1) return;
+
+    // 更新狀態
+    history[index].status = accept ? "accepted" : "rejected";
+    localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+
+    // 更新畫面
+    const bubble = document.getElementById(`transfer-${id}`);
+    if (bubble) {
+        const statusSpan = bubble.querySelector(".transfer-status");
+        if (statusSpan) statusSpan.textContent = getTransferStatusText(history[index].status);
+        const btns = bubble.querySelector(".transfer-buttons");
+        if (btns) btns.remove();
+    }
+
+    // 額外推一條訊息（回覆）
+    const reply = {
+        id: Date.now() + Math.random(),
+        type: "transferReply",
+        text: accept ? `已接受轉帳 NT$${history[index].amount}` : `已拒絕並退回 NT$${history[index].amount}`,
+        time: formatTime(),
+        sender: "me",
+        timestamp: Date.now()
+    };
+
+    history.push(reply);
+    localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+    appendMessage(reply);
+}
+
 // ✅ 暫存 fake 訊息陣列
 let fakeMessages = [];
 
@@ -381,7 +468,132 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
 // 傳送
 document.getElementById("sendBtn").addEventListener("click", async () => {
     console.log("✅ sendBtn 被點了！");
-    // 🕒 根據時間感知開關，決定是否要加入時間描述
+    if (fakeMessages.length === 0) return;
+
+    const currentChatId = window.currentChatId;
+    const chat = chats.find(c => c.id === currentChatId);
+    let historyRaw = localStorage.getItem(`chat-${currentChatId}`);
+    let history = [];
+
+    try {
+        history = JSON.parse(historyRaw);
+        if (!Array.isArray(history)) history = [];
+    } catch (e) {
+        history = [];
+    }
+
+    // ✅ 處理轉帳訊息
+    for (const msg of fakeMessages) {
+        if (msg.type === "transfer") {
+            const contextText = history.slice(-3).map(m => {
+                const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
+                if (m.type === "transfer") {
+                    return `${who}：轉帳 NT$${Math.round(m.amount)}（備註：${m.note || "無"}）`;
+                } else {
+                    return `${who}：${m.text}`;
+                }
+            }).join("\n");
+
+            const prompt = `
+這是給你的轉帳，金額為 NT$${Math.round(msg.amount)}，備註：${msg.note || "無"}。
+請你判斷要接受或拒絕這筆轉帳。請只回「接受」或「拒絕」。
+（上下文對話如下：）
+${contextText}
+        `.trim();
+
+            try {
+                const aiReply = await fetchAiReply(prompt);
+                console.log("🧠 AI 回覆文字：", aiReply);
+                const isAccept = aiReply.toLowerCase().includes("接受") || aiReply.includes("收");
+
+                // ✅ 1. 找到那筆原始 transfer 訊息
+                const transferMsgIndex = history.findIndex(m => m.id === msg.id);
+                if (transferMsgIndex !== -1) {
+                    history[transferMsgIndex].status = isAccept ? "accepted" : "rejected";
+
+                    // ✅ 2. 更新 localStorage
+                    localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+
+                    // ✅ 3. 更新畫面氣泡
+                    const bubble = document.getElementById(`transfer-${msg.id}`);
+                    if (bubble) {
+                        const statusSpan = bubble.querySelector(".transfer-status");
+                        if (statusSpan) statusSpan.textContent = getTransferStatusText(history[transferMsgIndex].status);
+                        const btns = bubble.querySelector(".transfer-buttons");
+                        if (btns) btns.remove();
+                    }
+                }
+
+
+                // ✅ 這是顯示在畫面上的 AI 回覆
+                //const transferTime = msg.timestamp || Date.now();
+
+                // AI 回覆（稍晚一點）
+                // 🔍 找出 fakeMessages 裡面最後一個 timestamp
+                let baseTimestamp = Math.max(...history.map(m => m.timestamp || 0), Date.now());
+
+                // 📦 建立 AI 系統回覆（system）與接收結果（transferReply）
+                const system = {
+                    id: Date.now() + Math.random(),
+                    type: "system",
+                    text: isAccept
+                        ? `你接受了 NT$${Math.round(msg.amount)} 的轉帳（備註：${msg.note || "無"}）`
+                        : `你拒絕了 NT$${Math.round(msg.amount)} 的轉帳（備註：${msg.note || "無"}）`,
+                    time: formatTime(),
+                    sender: "ai",
+                    timestamp: baseTimestamp + 1,
+                    isVoice: false,
+                    voiceContent: null,
+                    timeDisplay: null
+                };
+
+                const reply = {
+                    id: Date.now() + Math.random(),
+                    type: "transferReply",
+                    text: isAccept
+                        ? `已接受轉帳 NT$${Math.round(msg.amount)}`
+                        : `已拒絕並退回 NT$${Math.round(msg.amount)}`,
+                    time: formatTime(),
+                    sender: "ai",
+                    timestamp: baseTimestamp + 2,
+                    isVoice: false,
+                    voiceContent: null,
+                    timeDisplay: null
+                };
+
+
+
+                // 先把 reply 跟 system 一起推入 history（順序你可以視情況先後）
+                history.push(system);
+                history.push(reply);
+
+                // ✅ ✅ ✅ 重新根據 timestamp 排序一次 history（這才是關鍵）
+                history.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                // ✅ 存回 localStorage（順序正確了）
+                localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+
+                // 顯示回應
+                //appendMessage(system);
+                appendMessage(reply);
+
+            } catch (e) {
+                console.error("❌ AI 處理轉帳錯誤：", e);
+            }
+        }
+    }
+
+
+
+    // ✅ 將使用者訊息加入歷史紀錄
+    fakeMessages.forEach(m => {
+        history.push(m);
+    });
+
+    localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+    fakeMessages = [];
+
+    // ✅ 時間感知
     const isTimeAware = localStorage.getItem("timeAware") === "true";
     let timeText = "";
 
@@ -397,37 +609,15 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
         });
         timeText = `現在的時間是：${nowFormatted}。請根據這個時間調整你的語氣與說話內容。你知道現在幾點，但不要輕易判斷這個時間對使用者來說是否晚了。每個人作息不同，請依照氣氛自然互動即可，除非使用者表達出疲憊或睡意，再考慮提醒他休息。`;
     }
-
-
-    if (fakeMessages.length === 0) return;
-
-    const currentChatId = window.currentChatId;
-    const chat = chats.find(c => c.id === currentChatId);
-    let historyRaw = localStorage.getItem(`chat-${currentChatId}`);
-    let history = [];
-
-    try {
-        history = JSON.parse(historyRaw);
-        if (!Array.isArray(history)) history = [];
-    } catch (e) {
-        history = [];
-    }
-    // console.log("📜 載入的 history (sendBtn - after parse):", JSON.stringify(history)); // 新增日誌
-    // console.log("🧪 目前 fakeMessages (sendBtn - before history push):", JSON.stringify(fakeMessages)); // 新增日誌
-
-
-    // ✅ 新增這一段：將使用者剛發送的訊息 (fakeMessages) 加入到 history 陣列中
-    // 這樣它們才會被儲存到 localStorage
-    fakeMessages.forEach(m => {
-        console.log("➡️ 將使用者訊息推入 history:", m.id, m.text); // 新增日誌
-
-        history.push(m);
-    });
     // console.log("📜 history (sendBtn - after user messages push):", JSON.stringify(history)); // 新增日誌
 
     // 🔁 取得上下文記憶
     const contextLength = parseInt(document.getElementById("contextLengthInput").value) || 3;
-    const contextMessages = history.slice(-contextLength);
+    const contextMessages = [
+        ...history.filter(m => m.type === "transferReply" || m.type === "system").slice(-1),
+        ...history.slice(-contextLength)
+    ];
+
 
     let chatHistoryText = contextMessages.map(m => {
         const who = m.sender === "me" ? (chat.myName || "你") : (chat.name || "AI");
@@ -494,6 +684,11 @@ ${chatHistoryText}
 請只從以下貼圖清單中選擇使用，**禁止創造新的貼圖**，也**不要改動描述或網址**：
 ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join('\n')}
 
+- 轉帳格式
+[轉帳：NT$100 (買蛋糕)]
+數字後面括號是備註（可省略），可以寫想對使用者說的簡短內容
+
+
 - 照片和貼圖的差異
 照片(image)：指的是【模擬真實相機拍攝的照片】，比如風景、自拍、美食等
 貼圖(sticker)：指的是【卡通或梗圖】，用於表達情緒。
@@ -548,19 +743,45 @@ ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).j
         // 📤 處理 AI 回覆（切段 + 避免重複圖片網址）
         let i = 0;
 
+        let aiMsgTimestampBase = Date.now(); // 🆕 最外面定義（在 sendOne 前）
+
         function sendOne() {
             // ✅ 先組成訊息
             const reply = replies[i];
-            const msg = {
-                id: Date.now() + Math.random(),
-                text: reply,
-                time: formatTime(),
-                sender: "ai",
-                isVoice: false,
-                voiceContent: null,
-                timeDisplay: null,
-                timestamp: Date.now()
-            };
+            let msg;
+
+            if (reply.startsWith("[轉帳：")) {
+                // 💸 處理轉帳訊息格式：[轉帳：NT$100 (買蛋糕)]
+                const match = reply.match(/^\[轉帳：NT\$?(\d+)(?:\s*\((.*?)\))?\]/);
+                if (match) {
+                    const amount = parseInt(match[1]);
+                    const note = match[2] || "";
+
+                    msg = {
+                        id: Date.now() + Math.random(),
+                        type: "transfer",
+                        sender: "ai",
+                        amount,
+                        note,
+                        status: "pending",
+                        time: formatTime(),
+                        timestamp: aiMsgTimestampBase + i
+                    };
+                }
+            } else {
+                // 一般訊息
+                msg = {
+                    id: Date.now() + Math.random(),
+                    text: reply,
+                    time: formatTime(),
+                    sender: "ai",
+                    isVoice: false,
+                    voiceContent: null,
+                    timeDisplay: null,
+                    timestamp: aiMsgTimestampBase + i
+                };
+            }
+
 
             // ✅ 顯示訊息
             appendMessage(msg);
@@ -622,6 +843,8 @@ function appendMessage(msg) {
 
     const div = document.createElement("div");
     div.dataset.id = msg.id || (Date.now() + Math.random());
+    div.dataset.timestamp = msg.timestamp || Date.now();
+
     div.className = msg.sender === "me" ? "message me" : "message other";
 
     const currentChatId = window.currentChatId;
@@ -637,6 +860,27 @@ function appendMessage(msg) {
 
     // 用來儲存需要綁定點擊事件的語音元素信息
     const voiceElementsToBind = [];
+
+    if (msg.type === "transfer") {
+        const transferId = msg.id;
+        const canRespond = msg.status === "pending" && msg.sender !== "me";
+
+
+        bubbleContentHtml = `
+        <div class="transfer-bubble" id="transfer-${msg.id}" data-transfer-id="${msg.id}">
+            <div class="transfer-header">
+                <span class="title">轉帳給 ${getChatDisplayName(msg.sender)}</span>
+            </div>
+            <div class="transfer-amount">NT$${Math.round(msg.amount)}</div>
+            ${msg.note ? `<div class="transfer-note">${msg.note}</div>` : ""}
+            <div class="transfer-status-text transfer-status">${getTransferStatusText(msg.status)}</div>
+        </div>
+    `;
+    }
+
+    if (msg.type === "system") return;
+
+
 
     let i = 0;
     while (i < lines.length) {
@@ -1035,21 +1279,86 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===================== money ======================
     document.getElementById("moneyBtn").addEventListener("click", () => {
         const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+        document.getElementById("transferModal").style.display = "block";
 
-        const fakeTransfer = {
-            id: Date.now() + Math.random(),
-            text: "[轉帳：這是一筆預留的轉帳記錄]",
-            time: formatTime(),
-            sender: "me"
-        };
-
-        history.push(fakeTransfer);
-        localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
-        appendMessage(fakeTransfer);
-
-        alert("💸 轉帳功能尚未實作，但已預留接口！");
         document.getElementById("moreMenu").style.display = "none";
     });
+
+    document.getElementById("cancelTransfer").addEventListener("click", () => {
+        document.getElementById("transferModal").style.display = "none";
+    });
+    document.getElementById("confirmTransfer").addEventListener("click", () => {
+        console.log("點擊");
+
+        const amount = document.getElementById("transferAmount").value.trim();
+        const note = document.getElementById("transferNote").value.trim();
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+            alert("請輸入有效金額");
+            return;
+        }
+
+        const id = Date.now() + Math.random();
+        const msg = {
+            id,
+            type: "transfer",
+            amount: Number(amount),
+            note: note,
+            status: "pending", // 狀態：pending / accepted / rejected
+            time: formatTime(),
+            sender: "me",
+            timestamp: Date.now()
+        };
+
+        const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+        history.push(msg);
+        localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
+        appendMessage(msg);
+        fakeMessages.push(msg); // ✅ 這一行是關鍵！
+
+        // ✅ 新增：送去 AI 處理回應
+        //sendToAIForTransferReply(msg);
+        document.getElementById("transferModal").style.display = "none";
+        document.getElementById("transferAmount").value = "";
+        document.getElementById("transferNote").value = "";
+    });
+
+    document.addEventListener("click", (e) => {
+        const bubble = e.target.closest(".transfer-bubble[data-transfer-id]");
+        if (!bubble) return;
+
+        console.log("✅ 點到轉帳", bubble);
+
+        const transferId = bubble.dataset.transferId;
+        const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
+        const msg = history.find(m => m.id == transferId);
+        if (!msg) return;
+
+
+        // ✅ 加入條件：只在等待處理且不是自己發送的情況下彈窗
+        //if (msg.status !== "pending") return; //此為測試用
+        if (msg.status !== "pending" || msg.sender === "me") return; //此為正確的但為了測試有另外的版本
+
+        // 顯示彈窗
+        const infoText = `NT$${Math.round(msg.amount)}<br>${msg.note ? `備註：${msg.note}` : ""}`;
+        document.getElementById("transferInfoText").innerHTML = infoText;
+        document.getElementById("transferActionModal").dataset.transferId = msg.id;
+        document.getElementById("transferActionModal").style.display = "block";
+    });
+
+    document.getElementById("acceptTransfer").addEventListener("click", () => {
+        const id = document.getElementById("transferActionModal").dataset.transferId;
+        handleTransfer(id, true);
+        document.getElementById("transferActionModal").style.display = "none";
+    });
+
+    document.getElementById("rejectTransfer").addEventListener("click", () => {
+        const id = document.getElementById("transferActionModal").dataset.transferId;
+        handleTransfer(id, false);
+        document.getElementById("transferActionModal").style.display = "none";
+    });
+
+
+
 
     // ========== ✏️ 編輯模式 ==========
     const editBtn = document.getElementById("editModeBtn");
@@ -1073,9 +1382,18 @@ document.addEventListener("DOMContentLoaded", () => {
             cancelEditBtn.style.display = "inline-block";
 
             document.querySelectorAll(".bubble").forEach(b => {
+                // 如果 bubble 裡面含有轉帳專用元素，代表這是轉帳訊息，不能編輯
+                if (b.querySelector(".transfer-bubble")) {
+                    b.contentEditable = "false"; // 保險起見
+                    b.style.border = "";         // 不加虛線邊框
+                    return;
+                }
+
+                // 一般訊息可編輯
                 b.contentEditable = "true";
                 b.style.border = "2px dashed DarkSlateBlue";
             });
+
 
             setTimeout(() => {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1112,9 +1430,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         text: rawText, // ✅ 直接使用
                         isVoice: false,
                         voiceContent: null,
-                        timeDisplay: null
+                        timestamp: Number(m.dataset.timestamp) || Date.now() // ✅ 補上這行
                     });
                     return; // ✅ 跳過重建
+                }
+
+                // ✅ 若是轉帳訊息
+                if (bubble.querySelector(".transfer-bubble")) {
+                    const transferMsg = {
+                        id, time, sender,
+                        type: "transfer",
+                        amount: parseInt(bubble.querySelector(".transfer-amount")?.innerText?.replace("NT$", "")) || 0,
+                        note: bubble.querySelector(".transfer-note")?.innerText || "",
+                        status: bubble.querySelector(".transfer-status-text")?.innerText.includes("接受") ? "accepted" :
+                            bubble.querySelector(".transfer-status-text")?.innerText.includes("拒絕") ? "rejected" : "pending",
+                        isVoice: false,
+                        voiceContent: null,
+                        timeDisplay: null,
+                        timestamp: Number(m.dataset.timestamp) || Date.now()
+                    };
+                    allMessages.push(transferMsg);
+                    return;
                 }
 
                 let reconstructedTextLines = []; // 用於重建最終的 msg.text
@@ -1158,7 +1494,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     text: reconstructedTextLines.join("\n"), // 重新組裝為一行行
                     isVoice: false,
                     voiceContent: null,
-                    timeDisplay: null
+                    timestamp: Number(m.dataset.timestamp) || Date.now()
                 });
 
                 // 這裡不應該有 return; 它會過早結束外層的 forEach 循環
@@ -1535,7 +1871,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return {
                     ...msg,
                     id: fixId(msg.id),
-                    timestamp: msg.timestamp || Date.now(),
+                    timestamp: (typeof msg.timestamp === "number") ? msg.timestamp : Date.now(),
                     isVoice: msg.isVoice !== undefined ? msg.isVoice : /^\[語音：(.*)\]$/.test(msg.text),
                     voiceContent: msg.voiceContent || (msg.text?.match(/^\[語音：(.*)\]$/)?.[1] || null),
                     timeDisplay: msg.timeDisplay || (msg.text?.match(/^\[語音：(.*)\]$/)
@@ -1604,18 +1940,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const messages = {};
                 Object.keys(raw.messages).forEach(oldId => {
                     const newId = fixId(oldId);
-
-                    let timestampBase = Date.now(); // 或你想要設定的起始時間
-                    let counter = 0;
-
-                    messages[newId] = raw.messages[oldId].map(msg => {
+                    let timestampBase = Date.now(); // 你也可以自訂一個起始點
+                    messages[newId] = raw.messages[oldId].map((msg, index) => {
                         msg.id = fixId(msg.id);
 
-                        // ✅ 每筆訊息間隔 1 秒
-                        msg.timestamp = timestampBase + counter * 1000;
-                        counter++;
+                        // ✅ 重新生成 timestamp，不管原本有沒有
+                        msg.timestamp = timestampBase + index * 1000;
 
-                        // 語音處理（跟你原本的一樣）
+                        // ✅ 語音判斷
                         if (msg.isVoice === undefined) {
                             const match = msg.text?.match(/^\[語音：(.*)\]$/);
                             if (match) {
@@ -1635,14 +1967,17 @@ document.addEventListener("DOMContentLoaded", () => {
                             msg.note = msg.note || "";
                             msg.status = msg.status || "pending";
                         }
-
                         if (msg.type === "transferReply" || msg.type === "system") {
                             msg.text = msg.text || "";
                         }
 
                         return msg;
                     });
+
+                    // ✅ 排序是保險用，可留可不留
+                    messages[newId].sort((a, b) => a.timestamp - b.timestamp);
                 });
+
 
 
 
@@ -2740,7 +3075,7 @@ function showAiNewMessageBanner() {
     setTimeout(() => {
         if (banner) banner.style.opacity = "0";
         setTimeout(() => banner.remove(), 300);
-    }, 3000);
+    }, 8000);
 }
 
 function formatFakeTime(date = new Date()) {
@@ -2928,4 +3263,104 @@ function checkAutoMessage(currentChatId) {
     }
 }
 
+// 🛠️ 一鍵修復 localStorage 裡所有聊天訊息的 timestamp 缺漏與排序（每則間隔 1 秒）
+function fixMessageTimestamps() {
+    const fixId = id => String(id).replace(/\./g, "_");
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+    const now = Date.now();
 
+    chats.forEach(chat => {
+        const chatId = fixId(chat.id);
+        const key = `chat-${chatId}`;
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+
+        try {
+            const messages = JSON.parse(raw);
+            const base = now - messages.length * 1000; // 每則間隔 1 秒
+
+            const fixed = messages.map((msg, index) => {
+                if (typeof msg.timestamp !== "number") {
+                    msg.timestamp = base + index * 1000;
+                }
+                return msg;
+            });
+
+            fixed.sort((a, b) => a.timestamp - b.timestamp); // ✅ 按 timestamp 排序
+            localStorage.setItem(key, JSON.stringify(fixed));
+            console.log(`✅ 修復完成：${chatId}`);
+        } catch (e) {
+            console.error(`❌ 無法修復：${chatId}`, e);
+        }
+    });
+
+    alert("✅ 已修復所有訊息的 timestamp 並重新排序！（每則間隔 1 秒）");
+}
+
+function fixTransferTimestamps() {
+    const fixId = id => String(id).replace(/\./g, "_");
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+
+    chats.forEach(chat => {
+        const key = `chat-${fixId(chat.id)}`;
+        const messages = JSON.parse(localStorage.getItem(key) || "[]");
+
+        // 🔧 基本 fallback
+        messages.forEach((msg, i) => {
+            if (!msg.timestamp) msg.timestamp = Date.now() + i;
+        });
+
+        // 🔧 重排轉帳相關 timestamp
+        const baseTime = Date.now();
+        messages.forEach((msg, index) => {
+            if (msg.type === "transfer") {
+                msg.timestamp = baseTime + index * 1000;
+            }
+            if (msg.type === "transferReply") {
+                msg.timestamp = baseTime + index * 1000 + 100;
+            }
+            if (msg.type === "system") {
+                msg.timestamp = baseTime + index * 1000 + 200;
+            }
+        });
+
+        // ✅ 排序後寫回
+        messages.sort((a, b) => a.timestamp - b.timestamp);
+        localStorage.setItem(key, JSON.stringify(messages));
+    });
+
+    alert("✅ 所有轉帳訊息已修正並排序完成！");
+}
+function repairTimestampsByTime() {
+    const chats = JSON.parse(localStorage.getItem("chats") || "[]");
+
+    chats.forEach(chat => {
+        const key = `chat-${chat.id}`;
+        const messages = JSON.parse(localStorage.getItem(key) || "[]");
+
+        // 轉換時間格式成 timestamp（假設同一天）
+        const toTimestamp = (timeStr) => {
+            const [hour, min] = timeStr.split(":").map(Number);
+            const base = new Date();
+            base.setHours(hour);
+            base.setMinutes(min);
+            base.setSeconds(0);
+            base.setMilliseconds(0);
+            return base.getTime();
+        };
+
+        // 先補上 timestamp（根據 time）
+        messages.forEach(msg => {
+            if (!msg.timestamp && msg.time?.includes(":")) {
+                msg.timestamp = toTimestamp(msg.time);
+            }
+        });
+
+        // 排序
+        messages.sort((a, b) => a.timestamp - b.timestamp);
+
+        localStorage.setItem(key, JSON.stringify(messages));
+    });
+
+    alert("✅ 已依照時間欄位補上 timestamp 並排序完成！");
+}

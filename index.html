@@ -166,6 +166,13 @@
                             d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
                     </svg>
                 </button>
+                <button id="food">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px"
+                        fill="#FFFFFF">
+                        <path
+                            d="M280-80v-366q-51-14-85.5-56T160-600v-280h80v280h40v-280h80v280h40v-280h80v280q0 56-34.5 98T360-446v366h-80Zm400 0v-320H560v-280q0-83 58.5-141.5T760-880v800h-80Z" />
+                    </svg>
+                </button>
                 <!-- 你可以再加更多 -->
             </div>
         </div>
@@ -205,6 +212,30 @@
                 <button id="confirmAddSticker">儲存</button>
             </div>
         </div>
+
+        <!-- 轉帳彈窗 -->
+        <div id="transferModal" class="transferModel">
+            <div class="moneyTitle">轉帳</div>
+            <label>金額：</label>
+            <input id="transferAmount" type="number">
+            <br>
+            <label>備註 (選填)：</label>
+            <input id="transferNote" type="text">
+            <div class="buttonArea">
+                <button id="cancelTransfer">取消</button>
+                <button id="confirmTransfer">確定</button>
+            </div>
+
+        </div>
+        <div id="transferActionModal" class="accepttransferModel" style="display: none;">
+            <div class="moneyTitle">處理轉帳請求</div>
+            <div id="transferInfoText" style="margin: 6px 0;"></div>
+            <div class="buttonArea">
+                <button id="rejectTransfer">拒絕</button>
+                <button id="acceptTransfer">接受</button>
+            </div>
+        </div>
+
 
 
 
