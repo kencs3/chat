@@ -526,6 +526,8 @@ footer.footer-nav button:hover {
     padding: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     z-index: 999;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+
 }
 
 .moneyTitle {
@@ -570,11 +572,10 @@ footer.footer-nav button:hover {
     background: #627296;
     color: white;
     border-radius: 16px;
-    padding: 12px 16px;
+    padding: 10px 10px;
     margin: 4px 0;
     position: relative;
     width: 180px;
-    font-family: "Arial", sans-serif;
 }
 
 .transfer-header {
@@ -582,18 +583,18 @@ footer.footer-nav button:hover {
     align-items: center;
     justify-content: space-between;
     font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 17px;
+    margin-bottom: 5px;
 }
 
 .transfer-amount {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     margin-bottom: 4px;
 }
 
 .transfer-note {
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 4px;
 }
 
@@ -1327,6 +1328,74 @@ footer.footer-nav button:hover {
         opacity: 0;
     }
 }
+
+/* 語音 */
+.voice-tooltip {
+    position: absolute;
+    background: #ead5e7;
+    /* border: 2px dashed #55aaff; */
+    color: #624b61;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: popIn 0.2s ease;
+    max-width: 150px;
+    /* 限制最大寬度 */
+    word-break: break-word;
+    /* 長字也會斷開換行 */
+    white-space: pre-wrap;
+    /* 支援換行 */
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 照片/圖片 */
+.image-tooltip {
+    position: absolute;
+    background: #8ba0b2;
+    color: #ffffff;
+    /* border: 2px dashed #ffa14d; */
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    animation: popIn 0.2s ease;
+    max-width: 150px;
+    /* 限制最大寬度 */
+    word-break: break-word;
+    /* 長字也會斷開換行 */
+    white-space: pre-wrap;
+    /* 支援換行 */
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
 
 /* 語音動畫 
 .bars {

@@ -966,16 +966,39 @@ function appendMessage(msg) {
 
     // 在 DOM 元素添加到頁面後，批量綁定語音事件
     // 使用 setTimeout(0) 確保 DOM 渲染完成
+    // 語音顯示內容
     setTimeout(() => {
         voiceElementsToBind.forEach(item => {
             const voiceElement = document.getElementById(item.id);
             if (voiceElement) {
-                voiceElement.addEventListener("click", () => {
-                    alert(`🔊 ${item.content}`);
+                voiceElement.addEventListener("click", (e) => {
+                    // 🔁 移除舊的 tooltip（如果存在）
+                    document.querySelectorAll(".voice-tooltip").forEach(t => t.remove());
+
+                    // ✅ 建立 tooltip
+                    const tooltip = document.createElement("div");
+                    tooltip.className = "voice-tooltip";
+                    tooltip.textContent = `${item.content}`;
+                    document.body.appendChild(tooltip);
+
+                    // ✅ 計算位置（顯示在語音元素下方）
+                    const rect = voiceElement.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + window.scrollX - 5}px`;
+                    tooltip.style.top = `${rect.bottom + window.scrollY + 12}px`;
+
+                    // 其他地方自動關閉
+                    const dismiss = () => {
+                        tooltip.remove();
+                        document.removeEventListener("click", dismiss);
+                    };
+                    setTimeout(() => {
+                        document.addEventListener("click", dismiss);
+                    }, 10);
                 });
             }
         });
-    }, 0); // 延遲執行，確保元素已在 DOM 中
+    }, 0);
+
     scrollToBottom(); // ✅ 每加一則訊息都自動到底部
 }
 
@@ -1126,16 +1149,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const moreBtn = document.getElementById("moreBtn");
     const menu = document.getElementById("moreMenu");
 
-    moreBtn.addEventListener("click", () => {
+    //moreBtn.addEventListener("click", () => {
+    //console.log("按下更多按鈕了");
+
+    // 判斷當前狀態
+    //if (menu.style.display === "none" || menu.style.display === "") {
+    //menu.style.display = "flex"; // 顯示
+    //} else {
+    //menu.style.display = "none"; // 隱藏
+    //}
+    // 其他地方自動關閉
+    //const dismiss = () => {
+    //tooltip.remove();
+    //document.removeEventListener("click", dismiss);
+    //};
+    //});
+    moreBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // ⛔ 不要讓點擊冒泡到 document
         console.log("按下更多按鈕了");
 
-        // 判斷當前狀態
         if (menu.style.display === "none" || menu.style.display === "") {
-            menu.style.display = "flex"; // 顯示
+            menu.style.display = "flex";
+
+            // 點擊其他地方就關閉
+            const dismiss = (ev) => {
+                if (!menu.contains(ev.target) && ev.target !== moreBtn) {
+                    menu.style.display = "none";
+                    document.removeEventListener("click", dismiss);
+                }
+            };
+            setTimeout(() => {
+                document.addEventListener("click", dismiss);
+            }, 0); // 🔁 避免馬上觸發 dismiss
         } else {
-            menu.style.display = "none"; // 隱藏
+            menu.style.display = "none";
         }
     });
+
 
     // ===================== stickerBtn ===================
     const stickerBtn = document.getElementById("stickerBtn");
@@ -1196,14 +1246,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 顯示/隱藏貼圖面板
-    stickerBtn.addEventListener("click", () => {
-        stickerPanel.style.display = stickerPanel.style.display === "none" ? "block" : "none";
+    // 👇 顯示 / 隱藏貼圖面板
+    stickerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isVisible = stickerPanel.style.display === "block";
+        stickerPanel.style.display = isVisible ? "none" : "block";
+
+        if (!isVisible) {
+            const closeOnClickOutside = (event) => {
+                if (!stickerPanel.contains(event.target) && event.target !== stickerBtn) {
+                    stickerPanel.style.display = "none";
+                    document.removeEventListener("click", closeOnClickOutside);
+                }
+            };
+            setTimeout(() => {
+                document.addEventListener("click", closeOnClickOutside);
+            }, 0);
+        }
     });
 
-    // 打開新增貼圖視窗
-    openAddStickerModalBtn.addEventListener("click", () => {
-        addStickerModal.style.display = addStickerModal.style.display === "none" ? "block" : "none";
+    // 👇 顯示 / 隱藏新增貼圖 modal
+    openAddStickerModalBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isVisible = addStickerModal.style.display === "block";
+        addStickerModal.style.display = isVisible ? "none" : "block";
+
+        if (!isVisible) {
+            const closeOnClickOutside = (event) => {
+                if (!addStickerModal.contains(event.target) && event.target !== openAddStickerModalBtn) {
+                    addStickerModal.style.display = "none";
+                    document.removeEventListener("click", closeOnClickOutside);
+                }
+            };
+            setTimeout(() => {
+                document.addEventListener("click", closeOnClickOutside);
+            }, 0);
+        }
     });
+
 
     // 儲存自訂貼圖
     confirmAddStickerBtn.addEventListener("click", () => {
@@ -1254,12 +1334,37 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("messageInput").focus();
 
     });
+    //照片描述顯示
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("image-message")) {
             const desc = e.target.getAttribute("data-desc") || "（沒有描述）";
-            alert("📷 " + desc);
+
+            // 移除已有 tooltip
+            document.querySelectorAll(".image-tooltip").forEach(t => t.remove());
+
+            const tooltip = document.createElement("div");
+            tooltip.className = "image-tooltip";
+            tooltip.textContent = desc;
+            document.body.appendChild(tooltip);
+
+            const rect = e.target.getBoundingClientRect();
+            const top = rect.bottom + window.scrollY + 6;
+            const left = rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2;
+
+            tooltip.style.top = `${top}px`;
+            tooltip.style.left = `${left}px`;
+
+            // 點其他地方就關掉
+            const remove = () => {
+                tooltip.remove();
+                document.removeEventListener("click", remove);
+            };
+            setTimeout(() => {
+                document.addEventListener("click", remove);
+            }, 0);
         }
     });
+
 
 
 
