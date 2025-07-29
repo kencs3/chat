@@ -1604,10 +1604,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const messages = {};
                 Object.keys(raw.messages).forEach(oldId => {
                     const newId = fixId(oldId);
+
+                    let timestampBase = Date.now(); // 或你想要設定的起始時間
+                    let counter = 0;
+
                     messages[newId] = raw.messages[oldId].map(msg => {
                         msg.id = fixId(msg.id);
-                        if (!msg.timestamp) msg.timestamp = Date.now();
 
+                        // ✅ 每筆訊息間隔 1 秒
+                        msg.timestamp = timestampBase + counter * 1000;
+                        counter++;
+
+                        // 語音處理（跟你原本的一樣）
                         if (msg.isVoice === undefined) {
                             const match = msg.text?.match(/^\[語音：(.*)\]$/);
                             if (match) {
@@ -1621,9 +1629,22 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                         }
 
+                        // ✅ 補強格式
+                        if (msg.type === "transfer") {
+                            msg.amount = Number(msg.amount) || 0;
+                            msg.note = msg.note || "";
+                            msg.status = msg.status || "pending";
+                        }
+
+                        if (msg.type === "transferReply" || msg.type === "system") {
+                            msg.text = msg.text || "";
+                        }
+
                         return msg;
                     });
                 });
+
+
 
                 // 寫入 localStorage
                 localStorage.setItem("chats", JSON.stringify(chats));
