@@ -352,6 +352,7 @@ async function fetchAiReply(prompt) {
         return "";
     }
 }
+//======================= 轉帳功能 =========================
 
 function getChatDisplayName(sender) {
     const currentChatId = window.currentChatId;
@@ -407,6 +408,7 @@ function handleTransfer(id, accept) {
     localStorage.setItem(`chat-${currentChatId}`, JSON.stringify(history));
     appendMessage(reply);
 }
+//======================= 轉帳功能 =========================
 
 // ✅ 暫存 fake 訊息陣列
 let fakeMessages = [];
@@ -1381,7 +1383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ===================== money ======================
+    // ===================== money轉帳 ======================
     document.getElementById("moneyBtn").addEventListener("click", () => {
         const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
         document.getElementById("transferModal").style.display = "block";
@@ -1461,7 +1463,7 @@ document.addEventListener("DOMContentLoaded", () => {
         handleTransfer(id, false);
         document.getElementById("transferActionModal").style.display = "none";
     });
-
+    // ===================== money轉帳 ======================
 
 
 
