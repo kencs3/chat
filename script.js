@@ -1393,23 +1393,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 👇 顯示 / 隱藏新增貼圖 modal
-    openAddStickerModalBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isVisible = addStickerModal.style.display === "block";
-        addStickerModal.style.display = isVisible ? "none" : "block";
+    //openAddStickerModalBtn.addEventListener("click", (e) => {
+    //e.stopPropagation();
+    //const isVisible = addStickerModal.style.display === "block";
+    //addStickerModal.style.display = isVisible ? "none" : "block";
 
-        if (!isVisible) {
-            const closeOnClickOutside = (event) => {
-                if (!addStickerModal.contains(event.target) && event.target !== openAddStickerModalBtn) {
-                    addStickerModal.style.display = "none";
-                    document.removeEventListener("click", closeOnClickOutside);
-                }
-            };
-            setTimeout(() => {
-                document.addEventListener("click", closeOnClickOutside);
-            }, 0);
-        }
-    });
+    //if (!isVisible) {
+    //const closeOnClickOutside = (event) => {
+    //if (!addStickerModal.contains(event.target) && event.target !== openAddStickerModalBtn) {
+    //addStickerModal.style.display = "none";
+    //document.removeEventListener("click", closeOnClickOutside);
+    //}
+    //};
+    //setTimeout(() => {
+    //document.addEventListener("click", closeOnClickOutside);
+    //}, 0);
+    //}
+    //});
 
 
     // 儲存自訂貼圖
