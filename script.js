@@ -579,6 +579,8 @@ document.getElementById("fakeSendBtn").addEventListener("click", () => {
     appendMessage(fakeMsg);
     localStorage.setItem(`unsent-${currentChatId}`, JSON.stringify(fakeMessages));
     input.value = "";
+    document.getElementById("messageInput").focus();
+
     scrollToBottom();
 });
 
