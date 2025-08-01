@@ -1617,3 +1617,102 @@ footer.footer-nav button:hover {
 #confirmAddSticker {
     background-color: #f5b0c4;
 }
+
+/* 輸入彈窗 */
+.custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-alert-box {
+    background-color: #fffdfd;
+    padding: 20px 15px;
+    border-radius: 10px;
+    width: 200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.custom-alert-message {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+/*
+.custom-alert-confirm {
+    background-color: #647ca1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+*/
+
+.custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-alert-box {
+    background-color: #fffdfd;
+    padding: 20px 15px;
+    border-radius: 10px;
+    min-width: 260px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.custom-alert-message {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.custom-prompt-input {
+    width: 90%;
+    min-height: 32px;
+    max-height: 150px;
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: none;
+    overflow-y: auto;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.custom-alert-confirm,
+.custom-alert-cancel {
+    background-color: #647ca1;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 14px;
+}
+
+/*
+.custom-alert-cancel {
+    background-color: #aaa;
+}
+*/

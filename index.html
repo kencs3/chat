@@ -46,6 +46,38 @@
             </div>
         </div>
 
+        <!-- 提示彈窗 -->
+        <div id="customAlert" class="custom-alert-overlay" style="display: none;">
+            <div class="custom-alert-box">
+                <div class="custom-alert-message" id="customAlertMessage">這是一則提示</div>
+                <button class="custom-alert-confirm" id="customAlertConfirm">確定</button>
+            </div>
+        </div>
+
+        <!-- 自訂輸入彈窗 -->
+        <div id="customPrompt" class="custom-alert-overlay" style="display: none;">
+            <div class="custom-alert-box">
+                <div class="custom-alert-message" id="customPromptMessage">請輸入內容：</div>
+                <textarea id="customPromptInput" class="custom-prompt-input" rows="1"></textarea>
+                <div style="margin-top: 15px;">
+                    <button class="custom-alert-cancel" id="customPromptCancel">取消</button>
+                    <button class="custom-alert-confirm" id="customPromptConfirm">完成</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自訂確認彈窗 -->
+        <div id="customConfirm" class="custom-alert-overlay" style="display: none;">
+            <div class="custom-alert-box">
+                <div class="custom-alert-message" id="customConfirmMessage">你確定嗎？</div>
+                <div style="margin-top: 15px;">
+                    <button class="custom-alert-cancel" id="customConfirmNo">取消</button>
+                    <button class="custom-alert-confirm" id="customConfirmYes">確定</button>
+                </div>
+            </div>
+        </div>
+
+
         <!-- 聊天列表 -->
         <div id="page-chat" class="page" style="display: none;">
             <div class="page-header">
