@@ -1080,6 +1080,7 @@ footer.footer-nav button:hover {
 
     按鈕之間間距 
 }*/
+/* 聊天室按鈕 */
 .chat-buttons {
     display: flex;
     align-items: center;
@@ -1119,6 +1120,42 @@ footer.footer-nav button:hover {
 .chat-settings-btn:hover {
     opacity: 0.8;
 }
+
+.setting-menu {
+    position: absolute;
+    background: #fffcfc;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    top: 70px;
+    /* 齒輪下方位置，可調 */
+    width: auto;
+    right: 10px;
+    display: flex;
+    /* 這行讓裡面的按鈕橫向排列 */
+    z-index: 999;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.setting-menu button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    padding: 6px 6px;
+    margin: 3px 0;
+    background: #d1c4c4;
+    border: none;
+    border-radius: 5px;
+    /* ➤ 垂直置中用 */
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.setting-menu button:hover {
+    background: #eaeaea;
+}
+
 
 /*備份*/
 .backup-section {
