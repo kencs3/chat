@@ -2043,7 +2043,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chats[idx].contextLength = contextLength;
 
 
-        // 同步更新該聊天室項目的頭像
+        // 同步更新該聊天室項目的頭貼
         document.querySelector(`.chat-avatar[data-chatid="${currentChatId}"]`).src = aiAvatar;
         // 更新設定面板裡的預覽
         const targetImg = document.querySelector(".ai-avatar-preview img");
@@ -2473,7 +2473,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="content" style="margin-top:6px;">${formattedText.replace(/\n/g, "<br>")}</div>
   <div class="footer" style="margin-top:6px;">
     <span class="like" style="cursor:pointer;">${likedBy.includes(localStorage.getItem("userNickname") || "你") ? "❤️" : "🤍"}</span>
-    <span class="comment" style="margin-left:12px;cursor:pointer;">💬 留言</span>
+    <span class="comment" style="margin-left:12px;cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M240-400h480v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM880-80 720-240H160q-33 0-56.5-23.5T80-320v-480q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v720ZM160-320h594l46 45v-525H160v480Zm0 0v-480 480Z"/></svg></span>
   </div>
   <div class="likes-line" style="font-size:12px;color:#888;margin-top:4px;">
       ${likedBy.length ? likedBy.join("、") + " 說讚" : ""}
@@ -3039,7 +3039,7 @@ document.getElementById("chatSettingsBtn").addEventListener("click", () => {
     document.getElementById("myPersonaInput").value = chat.myPersona || "";
     document.getElementById("myAvatarUrlInput").value = chat.myAvatar || "";
 
-    // 預覽頭像
+    // 預覽頭貼
     if (chat.aiAvatar) {
         document.querySelector(".ai-avatar-preview").innerHTML =
             `<img src="${chat.aiAvatar}" style="width:80px;border-radius:50%">`;
@@ -3078,7 +3078,7 @@ document.getElementById("aiAvatarUpload").addEventListener("change", (e) => {
             document.querySelector(".ai-avatar-preview").innerHTML =
                 `<img src="${base64}" style="width:80px;border-radius:50%">`;
 
-            // 同步更新右上角聊天頭像
+            // 同步更新右上角聊天頭貼
             document.querySelector(".chat-avatar").src = base64;
         };
         reader.readAsDataURL(file);
