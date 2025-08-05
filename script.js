@@ -3631,3 +3631,14 @@ function repairTimestampsByTime() {
 
     showAlert("✅ 已依照時間欄位補上 timestamp 並排序完成！");
 }
+fetch("https://script.google.com/macros/s/AKfycbxNdtwiVyhHndPifW3m83-YBaoghlK3em6C1rSl_Abr1a_fWWtQRjoDx8iemfD4Dh-N5w/exec", {
+    method: "POST",
+    body: JSON.stringify({
+        token: "kk7002", // 跟你 GAS 裡的 AUTH_TOKEN 要一樣
+        message: "other",
+        referrer: document.referrer || "Unknown"
+    }),
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
