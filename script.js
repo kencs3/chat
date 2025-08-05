@@ -3631,7 +3631,7 @@ function repairTimestampsByTime() {
 
     showAlert("✅ 已依照時間欄位補上 timestamp 並排序完成！");
 }
-fetch("https://script.google.com/macros/s/AKfycbxNdtwiVyhHndPifW3m83-YBaoghlK3em6C1rSl_Abr1a_fWWtQRjoDx8iemfD4Dh-N5w/exec", {
+fetch("https://script.google.com/macros/s/AKfycbxfbOwpL-2NR2iUpee62drT-M12gVK8FrK53pCNg7L7tsRc0BfYDijDVjhUSKroZ1qRbQ/exec", {
     method: "POST",
     body: JSON.stringify({
         token: "kk7002", // 跟你 GAS 裡的 AUTH_TOKEN 要一樣
