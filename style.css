@@ -59,6 +59,17 @@ body {
     overflow-y: auto;
 }
 
+#chatList {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+ */
+    user-select: none;
+    /* 標準 */
+}
+
 #page-chatroom {
     display: flex;
     position: relative;
