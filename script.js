@@ -803,7 +803,7 @@ ${chatHistoryText}
 請只從以下貼圖清單中選擇使用，**禁止創造新的貼圖**，也**不要改動描述或網址**：
 ${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join('\n')}
 
-- 轉帳格式
+- 轉帳格式，你可以轉帳給使用者
 [轉帳：NT$100 (買蛋糕)]
 數字後面括號是備註（可省略），可以寫想對使用者說的簡短內容
 
@@ -2050,6 +2050,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (targetImg && aiAvatar) {
             targetImg.src = aiAvatar;
         }
+
+        // ✅ 即時更新聊天室訊息區的 AI 頭貼
+        document.querySelectorAll("#messages .avatar").forEach(img => {
+            img.src = aiAvatar;
+        });
+
         if (idx !== -1) {
             chats[idx].name = newName;
             chats[idx].aiPersona = aiPersona;
@@ -2556,9 +2562,9 @@ document.addEventListener("DOMContentLoaded", () => {
 貼文內容：${postToUpdate.text}
 有人留言：${reply}
 
-請你以簡短、自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
+請你以自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
 請不要加入旁白、括號或第三人稱描述。
-也不要說你是 AI，只要回覆角色會講的內容就好。
+扮演角色的回覆就好
         `;
 
                     try {
@@ -3045,7 +3051,7 @@ document.getElementById("chatSettingsBtn").addEventListener("click", () => {
             `<img src="${chat.aiAvatar}" style="width:80px;border-radius:50%">`;
     } else {
         document.querySelector(".ai-avatar-preview").innerHTML =
-            `<img src="https://files.catbox.moe/f0d3t9.jpg" style="width:80px;border-radius:50%">`;
+            `<img src="https://i.meee.com.tw/mYv66sr.png" style="width:80px;border-radius:50%">`;
     }
 
     if (chat.myAvatar) {
@@ -3053,7 +3059,7 @@ document.getElementById("chatSettingsBtn").addEventListener("click", () => {
             `<img src="${chat.myAvatar}" style="width:80px;border-radius:50%">`;
     } else {
         document.querySelector(".my-avatar-preview").innerHTML =
-            `<img src="https://files.catbox.moe/f0d3t9.jpg" style="width:80px;border-radius:50%">`;
+            `<img src="https://i.meee.com.tw/mYv66sr.png" style="width:80px;border-radius:50%">`;
     }
 
     document.getElementById("chatSettingsPanel").style.display = "block";
@@ -3065,34 +3071,34 @@ document.getElementById("cancelSettingsBtn").addEventListener("click", () => {
     document.getElementById("chatSettingsPanel").style.display = "none";
 });
 
-//圖片上傳
-document.getElementById("aiAvatarUpload").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (evt) {
-            const base64 = evt.target.result;
-            const currentChatId = document.querySelector(".chat-title").textContent;
-            localStorage.setItem(`${currentChatId}_aiAvatarBase64`, base64);
+//本地圖片上傳
+//document.getElementById("aiAvatarUpload").addEventListener("change", (e) => {
+//const file = e.target.files[0];
+//if (file) {
+//const reader = new FileReader();
+//reader.onload = function (evt) {
+//const base64 = evt.target.result;
+//const currentChatId = document.querySelector(".chat-title").textContent;
+//localStorage.setItem(`${currentChatId}_aiAvatarBase64`, base64);
 
-            document.querySelector(".ai-avatar-preview").innerHTML =
-                `<img src="${base64}" style="width:80px;border-radius:50%">`;
+//document.querySelector(".ai-avatar-preview").innerHTML =
+//`<img src="${base64}" style="width:80px;border-radius:50%">`;
 
-            // 同步更新右上角聊天頭貼
-            document.querySelector(".chat-avatar").src = base64;
-        };
-        reader.readAsDataURL(file);
-    }
-});
+// 同步更新右上角聊天頭貼
+//document.querySelector(".chat-avatar").src = base64;
+//};
+//reader.readAsDataURL(file);
+//}
+//});
 
-document.getElementById("myAvatarUpload").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const url = URL.createObjectURL(file);
-        document.querySelector(".my-avatar-preview").innerHTML = `<img src="${url}" style="width:80px;border-radius:50%">`;
-        localStorage.setItem("myAvatarPreview", url); // 或 base64
-    }
-});
+//document.getElementById("myAvatarUpload").addEventListener("change", (e) => {
+//const file = e.target.files[0];
+//if (file) {
+//const url = URL.createObjectURL(file);
+//document.querySelector(".my-avatar-preview").innerHTML = `<img src="${url}" style="width:80px;border-radius:50%">`;
+//localStorage.setItem("myAvatarPreview", url); // 或 base64
+//}
+//});
 
 // 回覆
 function addPost(text) {
@@ -3147,7 +3153,7 @@ async function autoCommentFromAI(postText, replyText) {
 
 請你以自然、貼近角色風格的語氣，針對上面這則留言回覆一句話。
 請不要加入旁白、括號或第三人稱描述。
-也不要說你是 AI，只要回覆角色會講的內容就好。
+扮演角色的回覆就好
 `;
 
     try {

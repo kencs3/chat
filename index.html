@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>迷你手機</title>
+    <title>Chat</title>
     <link rel="stylesheet" href="style.css" />
     <!-- ✅ 讓 Android 支援全螢幕（Chrome） -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -32,6 +32,10 @@
         gtag('js', new Date());
 
         gtag('config', 'G-R3SP3FHKP7');
+
+        gtag('event', 'host_domain', {
+            'host': window.location.hostname
+        });
     </script>
 
 </head>
@@ -368,7 +372,7 @@
                 </div>
             </div>
 
-            <button id="resetBubbleStyleBtn">重置氣泡樣式</button>
+            <button id="resetBubbleStyleBtn">重置泡泡樣式</button>
 
             <div class="settingline"></div>
 
