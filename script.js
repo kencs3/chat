@@ -13,9 +13,9 @@ const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
 
 // 預設貼圖
-//const defaultStickers = [
+const defaultStickers = [
     //{ name: "", url: "" },
-//];
+];
 
 // 新增聊天室
 const addChatBtn = document.getElementById("addChatBtn");
