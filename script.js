@@ -13,102 +13,9 @@ const STORAGE_LIMIT = 5000000; // 預估最大限制：5MB
 
 
 // 預設貼圖
-const defaultStickers = [
-    { name: "小狗無辜的眼神", url: "https://files.catbox.moe/mnfk0l.jpg" },
-    { name: "小狗委屈", url: "https://files.catbox.moe/t9o84s.jpg" },
-    { name: "小狗哭出來了", url: "https://files.catbox.moe/hpx10j.jpg" },
-    { name: "小狗很愛你", url: "https://files.catbox.moe/4q2izm.jpg" },
-    { name: "小狗驕傲", url: "https://files.catbox.moe/ksjp5l.jpg" },
-    { name: "小狗牙齒痛", url: "https://files.catbox.moe/u4ylip.jpg" },
-    { name: "小狗舉著愛心", url: "https://files.catbox.moe/out35e.jpg" },
-    { name: "小狗送你花花", url: "https://files.catbox.moe/zy5v8s.jpg" },
-    { name: "小狗吃手指", url: "https://files.catbox.moe/9h9gps.jpg" },
-    { name: "小狗要親臉頰", url: "https://files.catbox.moe/lx1dz3.jpg" },
-    { name: "小狗問你好不好呀", url: "https://files.catbox.moe/q7h1ai.jpg" },
-    { name: "小狗跟你貼貼", url: "https://files.catbox.moe/f0d3t9.jpg" },
-    { name: "小狗被你哄好了", url: "https://files.catbox.moe/qkxmzx.jpg" },
-    { name: "小狗拿著碗", url: "https://files.catbox.moe/b1qw59.jpg" },
-    { name: "小狗湊近看你", url: "https://files.catbox.moe/u4x59r.jpg" },
-    { name: "小狗得意", url: "https://files.catbox.moe/c93pkw.jpg" },
-    { name: "狗仗人勢", url: "https://files.catbox.moe/8tzks1.jpg" },
-    { name: "小狗親貓咪", url: "https://files.catbox.moe/ed1dlq.jpg" },
-    { name: "喜歡貓咪", url: "https://files.catbox.moe/m4yfr2.jpg" },
-    //{ name: "滿足地嘆氣", url: "https://files.catbox.moe/ejussa.jpg" },
-    //{ name: "薯條全炫我嘴裡", url: "https://files.catbox.moe/dvikcf.jpg" },
-    //{ name: "小狗裝扮成薯條的樣子", url: "https://files.catbox.moe/9u95x8.jpg" },
-    { name: "小狗吃薯條", url: "https://files.catbox.moe/27wo5f.jpg" },
-    { name: "小狗晚上難過的看手機", url: "https://files.catbox.moe/lfbka8.jpg" },
-    { name: "小狗太累了", url: "https://files.catbox.moe/3wxy6l.jpg" },
-    { name: "小狗舔你", url: "https://files.catbox.moe/aui57o.jpg" },
-    { name: "小狗大哭", url: "https://files.catbox.moe/89wi8s.jpg" },
-    { name: "得意的小狗", url: "https://files.catbox.moe/djujrp.jpg" },
-    { name: "小狗開心地搖尾巴", url: "https://files.catbox.moe/zueq8b.jpeg" },
-    { name: "小狗要抱抱", url: "https://files.catbox.moe/5gexwp.jpeg" },
-    { name: "小狗害羞", url: "https://files.catbox.moe/j1oup6.jpeg" },
-    { name: "小狗心動", url: "https://files.catbox.moe/zkh671.jpeg" },
-    //{ name: "小狗給你心心", url: "https://files.catbox.moe/8li96f.jpeg" },
-    { name: "小狗崇拜的樣子", url: "https://files.catbox.moe/svegg0.jpeg" },
-    { name: "小狗：別走看看我", url: "https://files.catbox.moe/r5jc7r.jpeg" },
-    { name: "小狗親親", url: "https://files.catbox.moe/2ez313.jpeg" },
-    { name: "小狗等待回覆ing", url: "https://files.catbox.moe/cik7oq.jpeg" },
-    { name: "小狗：我好想你啊", url: "https://files.catbox.moe/swr3au.jpeg" },
-    { name: "小狗：希望你幸福", url: "https://files.catbox.moe/1j0rgk.jpeg" },
-    { name: "小狗在思考", url: "https://files.catbox.moe/tgkoji.jpeg" },
-    { name: "小狗哭哭", url: "https://files.catbox.moe/4n4cw5.jpeg" },
-    { name: "小狗準備調皮", url: "https://files.catbox.moe/gea6bg.jpeg" },
-    { name: "要收留小狗嗎", url: "https://files.catbox.moe/h0uil5.jpeg" },
-    { name: "心碎小狗求收留", url: "https://files.catbox.moe/evo4h7.jpeg" },
-    { name: "寶寶我想你了", url: "https://files.catbox.moe/5btq5j.jpeg" },
-    { name: "小狗說hello", url: "https://files.catbox.moe/sal03g.jpeg" },
-    { name: "小狗說早安", url: "https://files.catbox.moe/7exhb2.jpeg" },
-    { name: "小狗在諂媚", url: "https://files.catbox.moe/3g4vnh.jpeg" },
-    { name: "小狗要一起玩", url: "https://files.catbox.moe/n0hz8x.jpeg" },
-    { name: "摸摸小狗的頭", url: "https://files.catbox.moe/66ny10.jpeg" },
-    { name: "小狗在睡覺", url: "https://files.catbox.moe/2pza5q.jpeg" },
-    { name: "我...喜歡你", url: "https://files.catbox.moe/2krll0.jpeg" },
-    { name: "生日快樂", url: "https://files.catbox.moe/bbgesx.jpeg" },
-    { name: "小禮物來囉", url: "https://files.catbox.moe/6836f0.jpeg" },
-    { name: "許個願望", url: "https://files.catbox.moe/yi85dg.jpeg" },
-    { name: "請我吃那個", url: "https://files.catbox.moe/vfwoc9.jpeg" },
-    { name: "在悄悄地想你", url: "https://files.catbox.moe/n3kkn3.jpeg" },
-    { name: "花花送你", url: "https://files.catbox.moe/z6a75l.jpeg" },
-    { name: "心都給你啊", url: "https://files.catbox.moe/y6byty.jpeg" },
-    { name: "偷心小狗開始工作", url: "https://files.catbox.moe/jlx8jz.jpeg" },
-    { name: "想我了嗎？", url: "https://files.catbox.moe/qab1w6.jpeg" },
-    { name: "好煩", url: "https://files.catbox.moe/7xdmw8.jpeg" },
-    { name: "想要那個", url: "https://files.catbox.moe/whn959.jpg" },
-    { name: "給我點錢好嗎", url: "https://files.catbox.moe/9vi9qn.jpg" },
-    { name: "小狗餓餓", url: "https://files.catbox.moe/a7z2ac.jpg" },
-    { name: "主人歡迎回家", url: "https://files.catbox.moe/wnkboi.jpg" },
-    { name: "不要難過啦", url: "https://files.catbox.moe/2830vu.jpeg" },
-    { name: "摸摸小狗的頭", url: "https://files.catbox.moe/2hutp7.jpeg" },
-    { name: "狗被曬", url: "https://files.catbox.moe/shtpns.jpeg" },
-    { name: "小狗要融化了", url: "https://files.catbox.moe/phacu7.jpeg" },
-    { name: "晚安", url: "https://files.catbox.moe/p1abmu.jpeg" },
-    { name: "怎麼還不回...", url: "https://files.catbox.moe/apfqi7.jpg" },
-    { name: "我要嫁給你", url: "https://files.catbox.moe/0afs8t.jpg" },
-    { name: "洗澡", url: "https://files.catbox.moe/v7lytn.jpg" },
-    { name: "被親暈", url: "https://files.catbox.moe/8ut3qd.jpg" },
-    { name: "收下我的心", url: "https://files.catbox.moe/6nfh3h.jpg" },
-    //{ name: "我的寶貝", url: "https://files.catbox.moe/trkrj7.jpg" },
-    { name: "來抱抱", url: "https://files.catbox.moe/0jekea.jpg" },
-    { name: "發出被窩共享邀請", url: "https://files.catbox.moe/bja2xp.jpg" },
-    { name: "刷牙", url: "https://files.catbox.moe/x2a0vb.jpg" },
-    { name: "雨天心碎的小狗", url: "https://files.catbox.moe/8ddo9p.jpg" },
-    { name: "送你花", url: "https://files.catbox.moe/jbxavc.jpg" },
-    { name: "捏捏臉", url: "https://files.catbox.moe/e8fnq2.jpg" },
-    { name: "揉揉臉", url: "https://files.catbox.moe/fyjsei.jpg" },
-    { name: "謝謝", url: "https://files.catbox.moe/klqpae.jpg" },
-    { name: "請和我約會", url: "https://files.catbox.moe/z39dm0.jpg" },
-    { name: "哭哭", url: "https://files.catbox.moe/8xj2bk.jpg" },
-    { name: "親臉頰", url: "https://files.catbox.moe/q2saqo.jpg" },
-    { name: "我來啦", url: "https://files.catbox.moe/d8h9fe.jpg" },
-    { name: "生氣", url: "https://files.catbox.moe/wnqsjj.jpg" },
-    { name: "晚安歐", url: "https://files.catbox.moe/e7cnw6.jpeg" },
-    { name: "請問一份愛多少錢？", url: "https://files.catbox.moe/h9tfiv.jpeg" },
-    { name: "偷你的心！", url: "https://files.catbox.moe/1l4pbn.jpeg" }
+//const defaultStickers = [
     //{ name: "", url: "" },
-];
+//];
 
 // 新增聊天室
 const addChatBtn = document.getElementById("addChatBtn");
@@ -795,13 +702,6 @@ ${chatHistoryText}
   [圖片：關於照片的描述]
   例如：
   [圖片：微笑的小狗]
-
-- 貼圖格式
-  <貼圖: 貼圖描述 | 貼圖圖片URL>
-  例如：
-  <貼圖: 開心狗狗 | https://files.catbox.moe/example_happy_dog.jpg>
-請只從以下貼圖清單中選擇使用，**禁止創造新的貼圖**，也**不要改動描述或網址**：
-${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join('\n')}
 
 - 轉帳格式，你可以轉帳給使用者
 [轉帳：NT$100 (買蛋糕)]
@@ -3391,10 +3291,6 @@ function triggerAutoMessage(currentChatId, lastTime, now) {
 圖片格式：
 第一行：你要說的話（可以省略）
 第二行：[圖片：圖片描述]
-
-貼圖格式（只能使用下列清單，**禁止自創**）：
-<貼圖: 貼圖描述 | 貼圖圖片URL>
-${defaultStickers.map(sticker => `<貼圖: ${sticker.name} | ${sticker.url}>`).join("\n")}
 `;
 
     const history = JSON.parse(localStorage.getItem(`chat-${currentChatId}`) || "[]");
